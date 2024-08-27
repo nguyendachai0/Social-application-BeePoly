@@ -4,8 +4,11 @@ use App\Events\UserConnected;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
+<<<<<<< HEAD
 use App\Events\UserConnectedToGroup;
 use App\Models\Group;
+=======
+>>>>>>> f1d360f (Adjust websocket channel and event, when User select conversation  the user should connect to channel  of that user and the  other is also connect)
 use Illuminate\Support\Facades\Log;
 
 
@@ -42,5 +45,13 @@ Broadcast::channel('user-connected.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('friend-request.user.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('user-connected.{id}', function ($user, $id) {
+    Log::info(
+        'Other user also connected',
+        ['user_id' => $id, 'channel' => "user-connected.{$id}"]
+    );
     return (int) $user->id === (int) $id;
 });

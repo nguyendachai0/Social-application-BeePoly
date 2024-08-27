@@ -118,6 +118,70 @@ import Dropdown from '@/Components/Dropdown';
 
         useEffect(() => {
         }, [sortedConversations])
+<<<<<<< HEAD
+=======
+
+        
+    //    useEffect(() => {
+    //     selectedConversation.forEach((conversation) => {
+    //         let  channel = `message.group.${conversation.id}`;
+
+    //         if(conversation.is_user){
+    //             channel = `message.user.${[
+    //                 parseInt(user.id),
+    //                 parseInt(conversation.id),
+    //             ]
+    //             .sort((a,b) => a - b)
+    //             .join("-")}`;
+    //         }
+
+    //         Echo.private(channel)
+    //         .error((error) => {
+    //             console.log(error);
+    //         })
+    //         .listen("SocketMessage" ,  (e) =>  {
+    //             const message = e.message;
+    //             emit("message.created",  message);
+    //             if(message.sender_id  === user.id)
+    //             {
+    //                 return;
+    //             }
+    //             emit("newMessageNotifiation", {
+    //                 user: message.sender,
+    //                 group_id: message.group_id,
+    //                 message:
+    //                 message.message || 
+    //                 `Shared ${
+    //                     message.attachments.length ===  1
+    //                     ? "an attachemnt"
+    //                     :  message.attachemnts.length +
+    //                     " attachemnts"
+    //                 }`,
+    //             });
+    //         })
+    //     })
+       
+    //     return () => {
+    //         selectedConversation.forEach((conversation) => {
+    //             let channel  = `message.group.${conversation.id}`;
+
+    //             if(conversation.is_user){
+    //                 channel = `message.user.${[parseInt(user.id),  parseInt(conversation.id), ]
+    //                     .sort((a,b) => a - b)
+    //                     .join("-")
+    //                 }`;
+    //             }
+    //             Echo.leave(channel);
+    //         })
+    //     };
+
+    // }, [selectedConversation])
+        
+        useEffect(() => {
+            console.log(localMessages)
+        }, [localMessages])
+
+>>>>>>> f1d360f (Adjust websocket channel and event, when User select conversation  the user should connect to channel  of that user and the  other is also connect)
     
     
 
@@ -131,6 +195,40 @@ import Dropdown from '@/Components/Dropdown';
     
     const subscribedChannels = useRef(new Set());
 
+<<<<<<< HEAD
+=======
+
+    //   useEffect(() => {
+    //     Echo.private(`user-connected.${user.id}`)
+    //         .error((error) => {
+    //             console.error('Error subscribing to user-connected channel:', error);
+    //         })
+    //         .listen('UserConnected', (event) => {
+    //             const channel = event.channelName;
+    //             console.log('channel', channel);
+    //             console.log('channel');
+    //             // Automatically subscribe to the newly connected channel
+    //             Echo.private(channel)
+    //                 .error((error) => {
+    //                     console.error('Error subscribing to channel:', error);
+    //                 })
+    //                 .listen('SocketMessage', (e) => {
+    //                     const message = e.message;
+    //                     emit('message.created', message);
+    //                     if (message.sender_id !== user.id) {
+    //                         emit('newMessageNotification', {
+    //                             user: message.sender,
+    //                             group_id: message.group_id,
+    //                             message: message.message || `Shared ${message.attachments.length} attachments`,
+    //                         });
+    //                     }
+    //                 });
+    //         });
+    // }, []);
+    
+    const subscribedChannels = useRef(new Set());
+
+>>>>>>> f1d360f (Adjust websocket channel and event, when User select conversation  the user should connect to channel  of that user and the  other is also connect)
     useEffect(() => {
         selectedConversation.forEach((conversation) => {
             let channel = `message.group.${conversation.id}`;
@@ -143,6 +241,10 @@ import Dropdown from '@/Components/Dropdown';
                     .join("-")}`;
             }
     
+<<<<<<< HEAD
+=======
+            // Subscribe only if not already subscribed
+>>>>>>> f1d360f (Adjust websocket channel and event, when User select conversation  the user should connect to channel  of that user and the  other is also connect)
             if (!subscribedChannels.current.has(channel)) {
                 subscribedChannels.current.add(channel);
     
@@ -175,8 +277,15 @@ import Dropdown from '@/Components/Dropdown';
             })
             .listen('UserConnected', (event) => {
                 const channel = event.channelName;
+<<<<<<< HEAD
                 if (!subscribedChannels.current.has(channel)) {
                     subscribedChannels.current.add(channel);
+=======
+                console.log('channel', subscribedChannels.current);
+                if (!subscribedChannels.current.has(channel)) {
+                    subscribedChannels.current.add(channel);
+                    console.log('channel', subscribedChannels.current);
+>>>>>>> f1d360f (Adjust websocket channel and event, when User select conversation  the user should connect to channel  of that user and the  other is also connect)
     
                     Echo.private(channel)
                         .error((error) => {
@@ -200,6 +309,7 @@ import Dropdown from '@/Components/Dropdown';
                         });
                 }
             });
+<<<<<<< HEAD
        
     }, [selectedConversation, user.id]);
     
@@ -219,6 +329,12 @@ import Dropdown from '@/Components/Dropdown';
             Echo.leave(friendRequestChannel);
         };
     }, [user.id]);
+=======
+    }, [selectedConversation, user.id]);
+    
+
+        
+>>>>>>> f1d360f (Adjust websocket channel and event, when User select conversation  the user should connect to channel  of that user and the  other is also connect)
       
     return (
 <div className="navbar bg-base-100">
