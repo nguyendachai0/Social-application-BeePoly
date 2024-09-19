@@ -1,0 +1,167 @@
+// @import "../../style.scss";
+// .rightBar {
+//     @include themify($themes) {
+//         flex: 3;
+//         position: sticky;
+//         top: 70px;
+//         height: calc(100vh - 70px);
+//         overflow: scroll;
+//         background-color: themed("bgSoft");
+//         @include mobile {
+//             display: none;
+//         }
+//         @include tablet {
+//             display: none;
+//         }
+//         &::-webkit-scrollbar {
+//             display: none;
+//         }
+//         .container {
+//             padding: 20px;
+//             .item {
+//                 -webkit-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
+//                 -moz-box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
+//                 box-shadow: 0px 0px 15px 1px rgba(0, 0, 0, 0.09);
+//                 padding: 20px;
+//                 margin-bottom: 20px;
+//                 background-color: themed("bg");
+//                 span {
+//                     color: gray;
+//                 }
+//                 .user {
+//                     display: flex;
+//                     align-items: center;
+//                     justify-content: space-between;
+//                     margin: 20px 0px;
+//                     .userInfo {
+//                         display: flex;
+//                         align-items: center;
+//                         gap: 20px;
+//                         position: relative;
+//                         img {
+//                             width: 40px;
+//                             height: 40px;
+//                             border-radius: 50%;
+//                             object-fit: cover;
+//                         }
+//                         .online {
+//                             width: 12px;
+//                             height: 12px;
+//                             border-radius: 50%;
+//                             background-color: limegreen;
+//                             position: absolute;
+//                             top: 0;
+//                             left: 30px;
+//                         }
+//                         p {
+//                             color: themed("textColorSoft");
+//                         }
+//                         span {
+//                             font-weight: 500;
+//                             color: themed("textColor");
+//                         }
+//                     }
+//                     .buttons {
+//                         display: flex;
+//                         align-items: center;
+//                         gap: 10px;
+//                         button {
+//                             border: none;
+//                             padding: 5px;
+//                             color: white;
+//                             cursor: pointer;
+//                             &:first-child {
+//                                 background-color: #5271ff;
+//                             }
+//                             &:last-child {
+//                                 background-color: #f0544f;
+//                             }
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//     }
+// }
+// rightBar.scss
+.rightBar {
+    width: 280px;
+    background-color: #f4f4f4;
+    padding: 20px;
+    height: 100vh;
+    overflow-y: auto;
+    .container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        .item {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            span {
+                font-size: 16px;
+                font-weight: bold;
+                display: block;
+                margin-bottom: 10px;
+            }
+            .user {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                .userInfo {
+                    display: flex;
+                    align-items: center;
+                    img {
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        margin-right: 10px;
+                        object-fit: cover;
+                    }
+                    span {
+                        font-size: 14px;
+                        color: #333;
+                    }
+                }
+                .buttons {
+                    button {
+                        border: none;
+                        background-color: #007bff;
+                        color: #fff;
+                        padding: 5px 10px;
+                        margin: 0 5px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        font-size: 12px;
+                        &:hover {
+                            background-color: #0056b3;
+                        }
+                    }
+                    button:last-child {
+                        background-color: #6c757d;
+                        &:hover {
+                            background-color: #5a6268;
+                        }
+                    }
+                }
+            }
+            p {
+                margin: 0;
+                font-size: 14px;
+                color: #666;
+                span {
+                    font-weight: bold;
+                }
+            }
+            // .online {
+            //     width: 10px;
+            //     height: 10px;
+            //     border-radius: 50%;
+            //     background-color: #28a745;
+            //     margin-left: 5px;
+            // }
+        }
+    }
+}

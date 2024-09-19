@@ -1,0 +1,25 @@
+.postActions {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+  }
+  
+  .likeButton, .commentButton, .shareButton {
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: #555;
+  }
+  
+  .likeIcon, .commentIcon, .shareIcon {
+    margin-right: 5px;
+  }
+  
+  .likeButton:hover, .commentButton:hover, .shareButton:hover {
+    color: #000;
+    opacity: 0.8;
+  }
+  
