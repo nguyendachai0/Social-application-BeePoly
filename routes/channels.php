@@ -4,11 +4,8 @@ use App\Events\UserConnected;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
-<<<<<<< HEAD
 use App\Events\UserConnectedToGroup;
 use App\Models\Group;
-=======
->>>>>>> f1d360f (Adjust websocket channel and event, when User select conversation  the user should connect to channel  of that user and the  other is also connect)
 use Illuminate\Support\Facades\Log;
 
 
