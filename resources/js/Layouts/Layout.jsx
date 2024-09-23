@@ -10,7 +10,7 @@ const Layout = ({ children, showLeftBar = true, showRightBar = true}) => {
     return (
         <>
             <Navbar />
-            <div style={{ display: "flex" }}>
+            <div className="container mx-auto px-4 pb-8 flex">
                  {showLeftBar  && (<LeftBar user={props.auth?.user} />)}
                 <div style={{ flex: 6 }}>
                     {children}

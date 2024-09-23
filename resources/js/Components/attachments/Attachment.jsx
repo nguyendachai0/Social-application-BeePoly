@@ -5,9 +5,8 @@ const Attachment = ({ attachments }) => {
 
   return attachments.map((attachment, index) => {
     const { mime: mime_type, path: url } = attachment;
-    
     if (mime_type.startsWith('image/')) {
-      return <img key={index} className="postImg" src={url} alt="Attachment" />;
+      return <img key={index} className="postImg w-full h-64 object-cover mb-4 rounded-lg" src={url} alt="Attachment" />;
     }
     
     if (mime_type.startsWith('video/')) {

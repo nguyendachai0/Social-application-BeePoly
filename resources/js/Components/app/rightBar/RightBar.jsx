@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
-import "./rightBar.scss";
 import { usePage } from "@inertiajs/react";
+import { FaHome, FaUser, FaEnvelope, FaBell, FaCog, FaUsers, FaCalendar, FaCompass, FaMoon, FaSun, FaHeart, FaComment, FaShare, FaEdit, FaEllipsisH, FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import UserAvatar from "../UserAvatar";
+import { useDarkMode } from "@/Context/DarkModeContext";
+import { IoMdSend } from "react-icons/io";
+
 const RightBar = () => {
+    const [userInput, setUserInput] = useState("");
+    const [chatMessages, setChatMessages] = useState([]);
+
+    const {darkMode} = useDarkMode();
     const page = usePage();
     const [onlineUsers, setOnlineUsers] = useState([]);
     const isUserOnline = (userId) => !!onlineUsers[userId];
@@ -15,7 +22,22 @@ const RightBar = () => {
         );
 
     }
-   
+
+    const handleUserInput = (e) => {
+        setUserInput(e.target.value);
+      };
+    
+      const handleSendMessage = () => {
+        if (userInput.trim() !== "") {
+          setChatMessages([...chatMessages, { type: "user", content: userInput }]);
+          setUserInput("");
+          // Simulate AI response
+          setTimeout(() => {
+            setChatMessages([...chatMessages, { type: "user", content: userInput }, { type: "ai", content: "Thank you for your message. How can I assist you today?" }]);
+          }, 1000);
+        }
+      };
+    
 
     useEffect(() => {
         Echo.join("online")
@@ -55,94 +77,61 @@ const RightBar = () => {
 
     const onlineFriends  = getOnlineFriends();
     return ( 
-        <div className="rightBar">
-            <div className="container">
-                <div className="item">
-                    <span>Gợi ý cho bạn</span>
-                    <div className="user">
-                        <div className="userInfo">
-                            <img 
-                                src="https://scontent.fdad1-2.fna.fbcdn.net/v/t39.30808-1/272362123_694636348557125_8039652474921985497_n.jpg?stp=dst-jpg_p120x120&_nc_cat=102&ccb=1-7&_nc_sid=0ecb9b&_nc_ohc=t5Z-RWRGv0EQ7kNvgE1_rJ6&_nc_ht=scontent.fdad1-2.fna&oh=00_AYDekLc2863XF8ekb3777z870ZJBCNILqNJKRuXcigy5jA&oe=66B2C6B1"
-                                alt="" 
-                            />
-                            <span>Đức Hải</span>
-                        </div>
-                        <div className="buttons">
-                            <button>Đồng ý</button>
-                            <button>Từ chối</button>
-                        </div>
-                    </div>
-                    <div className="user">
-                        <div className="userInfo">
-                            <img 
-                                src="https://scontent.fdad1-2.fna.fbcdn.net/v/t39.30808-1/272362123_694636348557125_8039652474921985497_n.jpg?stp=dst-jpg_p120x120&_nc_cat=102&ccb=1-7&_nc_sid=0ecb9b&_nc_ohc=t5Z-RWRGv0EQ7kNvgE1_rJ6&_nc_ht=scontent.fdad1-2.fna&oh=00_AYDekLc2863XF8ekb3777z870ZJBCNILqNJKRuXcigy5jA&oe=66B2C6B1"
-                                alt="" 
-                            />
-                            <span>Ngọc Đức</span>
-                        </div>
-                        <div className="buttons">
-                            <button>Đồng ý</button>
-                            <button>Từ chối</button>
-                        </div>
-                    </div>
+        <>
+            
+            <aside className="w-1/5 ml-8 hidden lg:block">
+          <div className={`${darkMode ? "bg-gray-800" : "bg-white"} rounded-lg shadow-md p-4 mb-8`}>
+            <h2 className="text-xl font-semibold mb-4">Who's Online</h2>
+            <ul className="space-y-4">
+              {onlineFriends.map((friend) => (
+                <li key={friend.id} className="flex items-center space-x-2">
+                  <div className="relative">
+                    <UserAvatar user={friend}/>
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                  </div>
+                  <span>{friend.first_name} {friend.last_name}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className={`${darkMode ? "bg-gray-800" : "bg-white"} rounded-lg shadow-md p-4`}>
+            <h2 className="text-xl font-semibold mb-4">AI Assistant</h2>
+            <div className="h-64 overflow-y-auto mb-4 border rounded p-2">
+              {chatMessages.map((message, index) => (
+                <div key={index} className={`mb-2 ${message.type === "user" ? "text-right" : "text-left"}`}>
+                  <span className={`inline-block p-2 rounded-lg ${message.type === "user" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"}`}>
+                    {message.content}
+                  </span>
                 </div>
-                <div className="item">
-                    <span>Hoạt động mới nhất</span>
-                    <div className="user">
-                        <div className="userInfo">
-                            <img 
-                                src="https://scontent.fdad1-2.fna.fbcdn.net/v/t39.30808-1/272362123_694636348557125_8039652474921985497_n.jpg?stp=dst-jpg_p120x120&_nc_cat=102&ccb=1-7&_nc_sid=0ecb9b&_nc_ohc=t5Z-RWRGv0EQ7kNvgE1_rJ6&_nc_ht=scontent.fdad1-2.fna&oh=00_AYDekLc2863XF8ekb3777z870ZJBCNILqNJKRuXcigy5jA&oe=66B2C6B1"
-                                alt="" 
-                            />
-                            <p><span>Đức Hải</span> Chia sẻ video</p>
-                        </div>
-                        <span>10 phút trước</span>
-                    </div>
-                    <div className="user">
-                        <div className="userInfo">
-                            <img 
-                                src="https://scontent.fdad1-2.fna.fbcdn.net/v/t39.30808-1/272362123_694636348557125_8039652474921985497_n.jpg?stp=dst-jpg_p120x120&_nc_cat=102&ccb=1-7&_nc_sid=0ecb9b&_nc_ohc=t5Z-RWRGv0EQ7kNvgE1_rJ6&_nc_ht=scontent.fdad1-2.fna&oh=00_AYDekLc2863XF8ekb3777z870ZJBCNILqNJKRuXcigy5jA&oe=66B2C6B1"
-                                alt="" 
-                            />
-                            <p><span>Ngọc Đức</span> Đã thay đổi ảnh bìa của họ</p>
-                        </div>
-                        <span>5 phút trước</span>
-                    </div>
-                    <div className="user">
-                        <div className="userInfo">
-                            <img 
-                                src="https://scontent.fdad1-3.fna.fbcdn.net/v/t39.30808-1/358439054_816747766761639_650919250803168650_n.jpg?stp=cp0_dst-jpg_p74x74&_nc_cat=111&ccb=1-7&_nc_sid=0ecb9b&_nc_ohc=_M4CETGy7qsQ7kNvgHSPacO&_nc_ht=scontent.fdad1-3.fna&oh=00_AYBUiitiOJafL3J1lDfZcqtZ4he6TFWC5eeeNjTMgakQgA&oe=66B2AC2B"
-                                alt="" 
-                            />
-                            <p><span>Huỳnh Nam</span> Chia sẻ 1 video</p>
-                        </div>
-                        <span>2 tiếng trước</span>
-                    </div>
-                </div>
-                <div className="item">
-                    <span>Người liên hệ</span>
-                    {onlineFriends.length > 0 ? (
-                        onlineFriends.map(friend => (
-                                <div className="flex items-center gap-2 p-2" key={friend.id}>
-                                <UserAvatar user={friend} online={true} />
-                                <div>{friend.first_name} {friend.last_name}</div>
-                            </div>
-                            // <div className="user" key={friend.id}>
-                            //     <div className="userInfo">
-                            //         <img 
-                            //             src="https://scontent.fdad1-2.fna.fbcdn.net/v/t39.30808-1/429677665_356934373886100_8496529619463221698_n.jpg?stp=cp0_dst-jpg_p74x74&_nc_cat=106&ccb=1-7&_nc_sid=0ecb9b&_nc_ohc=ykzxiAh72MEQ7kNvgG7aaO_&_nc_ht=scontent.fdad1-2.fna&oh=00_AYCgANVlJVkxz3t_jgb8yT6xsyvG_OPJTZes4flhm1XieA&oe=66B2AC98"
-                            //             alt="" 
-                            //         />
-                            //         <div className="online/>"></div>
-                            //     </div>
-                            // </div>
-                        ))
-                    ) : (
-                        <p>No online friends</p>
-                    )}
-                </div>
+              ))}
             </div>
-        </div>
+            <div className="flex">
+              <input
+                type="text"
+                value={userInput}
+                onChange={handleUserInput}
+                placeholder="Type your message..."
+                className="flex-grow px-3 py-2 rounded-l-lg border-t border-b border-l focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={handleSendMessage}
+                className="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300"
+              >
+                <IoMdSend />
+              </button>
+            </div>
+          </div>
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold mb-4">Connect with us</h2>
+            <div className="flex justify-center space-x-4">
+              <a href="#" className="text-blue-600 hover:text-blue-700 transition duration-300"><FaFacebookF /></a>
+              <a href="#" className="text-blue-400 hover:text-blue-500 transition duration-300"><FaTwitter /></a>
+              <a href="#" className="text-pink-600 hover:text-pink-700 transition duration-300"><FaInstagram /></a>
+              <a href="#" className="text-blue-700 hover:text-blue-800 transition duration-300"><FaLinkedinIn /></a>
+            </div>
+          </div>
+        </aside>
+        </>
 
     );
 };
