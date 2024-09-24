@@ -1,5 +1,6 @@
 import React, {useState}  from "react";
 import axios from "axios";
+import { toast } from 'react-toastify';
 
 import {FaImage, FaVideo, FaMapMarkerAlt, FaUserTag } from "react-icons/fa";
 
@@ -10,6 +11,12 @@ const CreatePost = () => {
         caption: "",
         attachments: [],
       });
+      const formatErrors = (errors) => {
+        return Object.values(errors)
+            .flat()
+            .join(', '); // Join all error messages into a single string
+    };
+    
       const handlePostChange = (e) => {
         setNewPost({
           ...newPost,
@@ -50,10 +57,14 @@ const CreatePost = () => {
             discardPost();
         } catch (error) {
             if (error.response && error.response.data.errors) {
+                const formattedErrors = formatErrors(error.response.data.errors); // Format errors
                 setErrors(error.response.data.errors); // Set validation errors
-            } else {
-                console.error("Error creating post:", error);
-            }          }        
+                toast.error(formattedErrors); // Display formatted error messages
+        
+                        } else {
+                            console.error("Error creating post:", error);
+                            toast.error("An error occurred while creating the post.");           
+                         }          }        
       };
       const handleCaptionChange = (e) => {
         setNewPost({
