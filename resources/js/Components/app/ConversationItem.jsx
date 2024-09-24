@@ -1,8 +1,5 @@
 import {Link,  usePage} from '@inertiajs/react';
-import UserAvatar  from "./UserAvatar";
-import GroupAvatar from "./GroupAvatar";
-import { formatMessageDateShort } from '@/helpers';
-import UserOptionsDropDown from './UserOptionsDropDown';
+
 const ConversationItem = ({
     conversation, 
     selectedConversation = null,

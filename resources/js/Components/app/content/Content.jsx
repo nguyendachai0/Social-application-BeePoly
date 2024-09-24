@@ -3,33 +3,34 @@ import {  FaPlus, FaImage, FaVideo, FaMapMarkerAlt, FaUserTag } from "react-icon
 
 import 'react-toastify/dist/ReactToastify.css';
 import Post from "@/Components/post/Post";
+import CreatePost from "@/Components/createPost/CreatePost";
 const Content = ({user, posts}) => {
     const [newStory, setNewStory] = useState("");
-    const [previewStory, setPreviewStory] = useState("");
+
+    
   const [mediaPreview, setMediaPreview] = useState(null);
-    const handleStoryChange = (e) => {
-        setNewStory(e.target.value);
-        setPreviewStory(e.target.value);
-      };
+  const   [newPost,  setNewPost] = useState({
+    content: "",
+    media: null,
+  });
+
+
+   
     
-      const handleMediaUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setMediaPreview(reader.result);
-          };
-          reader.readAsDataURL(file);
+     
+    
+     
+
+      const handlePostSubmit = ()  => {
+        if(newPost.content.trim() || newPost.media){
+          const updatedPosts = [
+            ...posts,
+            {
+
+            }
+          ]
         }
-      };
-    
-      const handlePostStory = () => {
-        // Logic to post the story
-        console.log("Posting story:", newStory);
-        setNewStory("");
-        setPreviewStory("");
-        setMediaPreview(null);
-      };
+      }
     return (
         
         <>
@@ -71,58 +72,7 @@ const Content = ({user, posts}) => {
           ))}
         </div>
       </div>
-             <div className="bg-white rounded-lg shadow p-4">
-        <h3 className="font-semibold mb-4">Create New Story</h3>
-        <textarea
-          className="w-full p-2 border rounded-lg mb-4"
-          rows="3"
-          placeholder="What's on your mind?"
-          value={newStory}
-          onChange={handleStoryChange}
-        ></textarea>
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex space-x-2">
-            <label className="cursor-pointer text-gray-600 hover:text-blue-500">
-              <FaImage className="text-xl" />
-              <input type="file" className="hidden" accept="image/*" onChange={handleMediaUpload} />
-            </label>
-            <label className="cursor-pointer text-gray-600 hover:text-blue-500">
-              <FaVideo className="text-xl" />
-              <input type="file" className="hidden" accept="video/*" onChange={handleMediaUpload} />
-            </label>
-            <button className="text-gray-600 hover:text-blue-500">
-              <FaMapMarkerAlt className="text-xl" />
-            </button>
-            <button className="text-gray-600 hover:text-blue-500">
-              <FaUserTag className="text-xl" />
-            </button>
-          </div>
-          <span className="text-sm text-gray-500">{newStory.length}/280</span>
-        </div>
-        <div className="mb-4">
-          <h4 className="font-semibold mb-2">Preview</h4>
-          <div className="bg-gray-100 p-4 rounded-lg">
-            <p>{previewStory}</p>
-            {mediaPreview && (
-              <img src={mediaPreview} alt="Preview" className="mt-2 max-w-full h-auto rounded-lg" />
-            )}
-          </div>
-        </div>
-        <div className="flex justify-end space-x-2">
-          <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-            Discard
-          </button>
-          <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
-            Save Draft
-          </button>
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-            onClick={handlePostStory}
-          >
-            Post Story
-          </button>
-        </div>
-      </div>
+           <CreatePost/>
              {posts.length > 0 ? (
                     posts.map((post) => (
                         <Post key={post.id} post={post}/>

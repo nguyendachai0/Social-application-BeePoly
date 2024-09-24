@@ -26,8 +26,9 @@ class PostController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'caption' =>  'string',
-            'attachments.*' => 'file|mimes:jpg,png,pdf,docx|max:2048'
+            'caption' =>  'nullable|string|required_without:attachments',
+            'attachments' => 'nullable|array|max:10|required_without:caption',
+            'attachments.*' => 'file|max:1024000|mimes:jpg,jpeg,png,pdf,docx,mp4,mov,avi'
         ]);
         $data = [
             'user_id' => auth()->id(),
