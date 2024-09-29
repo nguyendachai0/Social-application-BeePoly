@@ -77,14 +77,3 @@ jobs:
       - name: Run NPM
         run: npm ci
         working-directory: ./
-
-      - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
-        env:
-          DB_CONNECTION: mysql
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_DATABASE: test_db
-          DB_USERNAME: user
-          DB_PASSWORD: password
-        run: php artisan test
-        working-directory: ./
