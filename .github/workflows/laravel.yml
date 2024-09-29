@@ -40,15 +40,15 @@ jobs:
 
     - name: Update Dependencies
       run: composer update
-      working-directory: ./backend
+      working-directory: ./
 
     - name: Install Dependencies
       run: composer install
-      working-directory: ./backend
+      working-directory: ./
 
     - name: Generate key
       run: php artisan key:generate
-      working-directory: ./backend
+      working-directory: ./
 
     - name: Update .env for MySQL
       run: |
@@ -58,11 +58,11 @@ jobs:
         echo "DB_DATABASE=test_db" >> .env
         echo "DB_USERNAME=user" >> .env
         echo "DB_PASSWORD=password" >> .env
-      working-directory: ./backend
+      working-directory: ./
 
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
-      working-directory: ./backend
+      working-directory: ./
 
     - name: Wait for MySQL
       run: |
@@ -73,7 +73,7 @@ jobs:
         
     - name: Run Migrations
       run: php artisan migrate --force
-      working-directory: ./backend
+      working-directory: ./
 
     - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
       env:
@@ -84,4 +84,4 @@ jobs:
         DB_USERNAME: user
         DB_PASSWORD: password
       run: php artisan test
-      working-directory: ./backend
+      working-directory: ./
