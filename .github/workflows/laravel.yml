@@ -78,10 +78,6 @@ jobs:
         run: npm ci
         working-directory: ./
 
-      - name: Run Laravel Reverb
-        run: php artisan reverb:start
-        working-directory: ./
-
       - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
         env:
           DB_CONNECTION: mysql
