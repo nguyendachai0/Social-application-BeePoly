@@ -50,10 +50,6 @@ jobs:
       run: php artisan key:generate
       working-directory: ./backend
 
-    - name: Add JWT secret to .env
-      run: echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-      working-directory: ./backend
-
     - name: Update .env for MySQL
       run: |
         echo "DB_CONNECTION=mysql" >> .env
