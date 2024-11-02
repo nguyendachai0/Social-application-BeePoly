@@ -1,10 +1,12 @@
-import GuestLayout from '@/Layouts/GuestLayout';
 import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
-import { Head, Link, useForm  } from '@inertiajs/react';
+import {  useForm  } from '@inertiajs/react';
 import { useState } from 'react';
 
-export default function Register() {
-    const [isLogin, setIsLogin] = useState(true);
+export default function Authentication({path}) {
+  console.log(path)
+  const stateLogin = path == 'login';
+
+    const [isLogin, setIsLogin] = useState(stateLogin);
     const { data, setData, post, processing, reset } = useForm({
             email: "",
             password: "",
@@ -26,15 +28,31 @@ export default function Register() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (data.password !== data.password_confirmation) {
-            setErrors((prev) => ({
-                ...prev,
-                password_confirmation: "Passwords do not match",
-            }));
-            return;
-        }
+        let formData = {
+            email: data.email,
+            password: data.password,
+        };
 
-        post(route('register'), {
+        if (!isLogin) {
+            formData = {
+                ...formData,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                password_confirmation: data.password_confirmation,
+            };
+
+            if (data.password !== data.password_confirmation) {
+                setErrors((prev) => ({
+                    ...prev,
+                    password_confirmation: "Passwords do not match",
+                }));
+                return;
+            }
+        }
+    
+        const routeName = isLogin ? 'login' : 'register';
+        post(route(routeName), {
+            data: formData,
             onFinish: () => reset('password', 'password_confirmation'),
         });
     };
@@ -201,6 +219,7 @@ export default function Register() {
                     </p>
                   )}
                 </div>
+                {!isLogin && (
                 <div>
                                 <label htmlFor="passwordConfirmation" className="block text-sm font-medium text-gray-700">Xác Nhận Mật Khẩu</label>
                                 <div className="mt-1 relative">
@@ -225,6 +244,7 @@ export default function Register() {
                                     )}
                                 </div>
                  </div>
+                )}
               </div>
               <button
                 type="submit"
