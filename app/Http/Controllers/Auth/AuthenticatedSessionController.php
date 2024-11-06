@@ -19,13 +19,11 @@ class AuthenticatedSessionController extends Controller
     /**
      * Display the login view.
      */
-    public function create(): Response
+    public function create(Request $request): Response
     {
-        Log::infO('h');
-        $path = ltrim($_SERVER['REQUEST_URI'], '/');
-
+        $path = $request->getRequestUri();
         return Inertia::render('Auth/AuthForm', [
-            'status' => session('status'),
+            'status' => 200,
             'path' => $path,
         ]);
     }
