@@ -1,6 +1,7 @@
 import React from "react";
 import DatePicker from "react-datepicker";
 import { FaCalendar } from "react-icons/fa";
+import "react-datepicker/dist/react-datepicker.css";
 
 const DatePickerField = ({label, selected, onChange, error }) => (
   <div>

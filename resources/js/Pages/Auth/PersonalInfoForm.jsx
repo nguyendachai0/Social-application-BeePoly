@@ -1,13 +1,11 @@
 import React from "react";
-import { FaEnvelope, FaLock, FaUser, FaCalendar, FaVenusMars, FaCamera } from "react-icons/fa";
+import { FaEnvelope, FaLock, FaUser, FaSpinner, FaCalendar, FaVenusMars, FaCamera } from "react-icons/fa";
 import DatePickerField from "./DatePickerField";
 import SelectField from "./SelectField";
 import InputField from "./InputField";
 import AvatarUploader from "./AvatarUploader";
 
-const PersonalInfoForm = ({ formData, errors, handleChange,  handleSubmit, avatar, handleDateChange, handleAvatarChange, isLogin, loading }) => {
-
-    console.log(isLogin)
+const PersonalInfoForm = ({ data, errors, handleChange,  handleSubmit, handleDateChange, handleAvatarChange, isLogin, loading, avatar }) => {
     
   return (
     <div className={`w-full md:w-1/2 p-8 transition-transform duration-1000 ease-in-out transform ${isLogin ? "translate-x-0" : "md:translate-x-full"}`}>
@@ -16,14 +14,18 @@ const PersonalInfoForm = ({ formData, errors, handleChange,  handleSubmit, avata
             </h2>
             <form onSubmit={handleSubmit} className="space-y-6">
 
-            {!isLogin && <AvatarUploader {...{ avatar, onAvatarChange: handleAvatarChange }} />}
+            {!isLogin && <AvatarUploader 
+              avatar={avatar}
+             data={data}          
+      onAvatarChange={handleAvatarChange} 
+       />}
 
                 {!isLogin &&  ( <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <>
             <InputField
               icon={FaUser}
               name="firstName"
-              value={formData.firstName}
+              value={data.firstName}
               placeholder="First name"
               error={errors.firstName}
               onChange={handleChange}
@@ -31,7 +33,7 @@ const PersonalInfoForm = ({ formData, errors, handleChange,  handleSubmit, avata
             <InputField
               icon={FaUser}
               name="surName"
-              value={formData.surName}
+              value={data.surName}
               placeholder="Surname"
               error={errors.surName}
               onChange={handleChange}
@@ -43,7 +45,7 @@ const PersonalInfoForm = ({ formData, errors, handleChange,  handleSubmit, avata
               <InputField
           icon={FaEnvelope}
           name="contactInfo"
-          value={formData.contactInfo}
+          value={data.contactInfo}
           placeholder="Mobile number or email address"
           error={errors.contactInfo}
           onChange={handleChange}
@@ -51,14 +53,14 @@ const PersonalInfoForm = ({ formData, errors, handleChange,  handleSubmit, avata
 
               {!isLogin && (<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <DatePickerField label="Date of Birth"
-              selected={formData.dateOfBirth}
+              selected={data.dateOfBirth}
               onChange={handleDateChange}
               error={errors.dateOfBirth}
               />
 
             <SelectField
               name="gender"
-              value={formData.gender}
+              value={data.gender}
               error={errors.gender}
               onChange={handleChange}
             />
@@ -68,7 +70,7 @@ const PersonalInfoForm = ({ formData, errors, handleChange,  handleSubmit, avata
           icon={FaLock}
           name="password"
           type="password"
-          value={formData.password}
+          value={data.password}
           placeholder={`Enter your ${isLogin ? "password" : "new password"}`}
           error={errors.password}
           onChange={handleChange}
