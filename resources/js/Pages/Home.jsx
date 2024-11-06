@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import Content from "@/Components/app/content/Content";
-import Layout from "@/Layouts/Layout"; // Import the Layout component
+import Layout from "@/Layouts/Layout"; 
 
 const Home = ({ auth }) => {
     const [posts, setPosts] = useState([]);
@@ -27,7 +27,6 @@ const Home = ({ auth }) => {
     );
 };
 
-// Use Layout as a layout for this page
 Home.layout = (page) => (
     <Layout>{page}</Layout>
 );
