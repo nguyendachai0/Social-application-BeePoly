@@ -42,6 +42,7 @@ export default function Post({ post }) {
     };
 
     const handleEmojiClick = (emojiObject) => {
+      console.log('h');
       setComment(prevComment => prevComment + emojiObject.emoji);
     };
 
@@ -121,7 +122,7 @@ export default function Post({ post }) {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-2">
                    <UserAvatar user={post.user}/>
-                    <span className="font-semibold">{post.user.first_name} {post.user.last_name}</span>
+                    <span className="font-semibold">{post.user.first_name} {post.user.sur_name}</span>
                   </div>
                   <button className="text-gray-500 hover:text-gray-700"><FaEllipsisH /></button>
                 </div>
