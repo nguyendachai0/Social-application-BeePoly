@@ -6,8 +6,8 @@ import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 const Layout = ({ children, showLeftBar = true, showRightBar = true}) => {
-    const { props } = usePage();  // Access the page props
-    console.log('Page Props:', props); // Check what is available in props
+    const { props } = usePage();  
+    console.log('Page Props:', props); 
 
     return (
         <>

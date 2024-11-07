@@ -37,9 +37,6 @@ Broadcast::channel('message.group.{groupId}', function (User  $user, int $groupI
     return null;
 });
 
-Broadcast::channel('user-connected.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
-});
 
 Broadcast::channel('friend-request.user.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
@@ -51,4 +48,16 @@ Broadcast::channel('user-connected.{id}', function ($user, $id) {
         ['user_id' => $id, 'channel' => "user-connected.{$id}"]
     );
     return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('user-posted.{id}', function ($user, $id) {
+    Log::info(
+        'User has just posted',
+        ['user_id' => $id, 'channel' => "user-posted.{$id}"]
+    );
+    return (int) $user->id === (int) $id || $user->friends()->where('id', $id)->exists();
+});
+
+Broadcast::channel('user-feed.{userId}', function ($user, $userId) {
+    return (int) $user->id === (int) $userId || $user->friends()->where('id', $userId)->exists();
 });

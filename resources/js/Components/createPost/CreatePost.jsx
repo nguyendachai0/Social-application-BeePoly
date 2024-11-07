@@ -14,7 +14,7 @@ const CreatePost = () => {
       const formatErrors = (errors) => {
         return Object.values(errors)
             .flat()
-            .join(', '); // Join all error messages into a single string
+            .join(', '); 
     };
     
       const handlePostChange = (e) => {
@@ -53,13 +53,12 @@ const CreatePost = () => {
                     "Content-Type": "multipart/form-data",
              }
             });
-            console.log("Post created:", response.data);
             discardPost();
         } catch (error) {
             if (error.response && error.response.data.errors) {
-                const formattedErrors = formatErrors(error.response.data.errors); // Format errors
-                setErrors(error.response.data.errors); // Set validation errors
-                toast.error(formattedErrors); // Display formatted error messages
+                const formattedErrors = formatErrors(error.response.data.errors); 
+                setErrors(error.response.data.errors); 
+                toast.error(formattedErrors); 
         
                         } else {
                             console.error("Error creating post:", error);

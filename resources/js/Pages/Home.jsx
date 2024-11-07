@@ -12,8 +12,8 @@ const Home = ({ auth }) => {
             try {
                 const response = await fetch('/posts');
                 const data = await response.json();
-                console.log(data);
                 setPosts(data);
+                console.log("Fetched data:", data);
             } catch (error) {
                 console.error("Error fetching posts:", error);
             }
@@ -23,7 +23,7 @@ const Home = ({ auth }) => {
     }, []);
 
     return (
-        <Content user={auth?.user} posts={posts} />
+        <Content user={auth?.user} initialPosts={posts} />
     );
 };
 

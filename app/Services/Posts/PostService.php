@@ -34,7 +34,6 @@ class PostService implements PostServiceInterface
                 ]);
             }
         }
-        Log::info('posts', [$post]);
         return  $post;
     }
     public function getPostById($id)

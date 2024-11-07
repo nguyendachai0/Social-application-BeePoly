@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostCreated;
 use Illuminate\Http\Request;
 use App\Services\Posts\PostServiceInterface;
-use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
@@ -37,6 +37,18 @@ class PostController extends Controller
         ];
 
         $post = $this->postService->createPost($data);
+
+        $post = $this->postService->getPostById($post['id']);
+
+        $user = auth()->user();
+        $friends = $user->friends->pluck('id');
+        $recipientIds = $friends->merge([$user->id]);
+
+        foreach ($recipientIds as $id) {
+            event(new PostCreated("user-feed.{$id}", $post));
+        }
+
+
         return response()->json($post, 201);
     }
 

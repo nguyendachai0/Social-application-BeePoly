@@ -225,7 +225,7 @@ import Dropdown from '@/Components/Dropdown';
   <div className="flex-1">
   <div>
             <Link href={route('dashboard')} className="btn btn-ghost text-xl">
-                FootNote
+                BeePoly
             </Link>
         </div>
             <div className="form-control">
@@ -337,7 +337,7 @@ import Dropdown from '@/Components/Dropdown';
                                                 type="button"
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
                                             >
-                                                {user.first_name + ' ' + user.last_name}
+                                                {user.first_name + ' ' + user.sur_name}
 
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"

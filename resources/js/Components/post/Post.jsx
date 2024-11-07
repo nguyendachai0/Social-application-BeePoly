@@ -1,10 +1,8 @@
-import { MoreVert, ThumbUp, ChatBubbleOutline, Share } from "@mui/icons-material";
 import { format, parseISO } from 'date-fns'; 
 import UserAvatar from "../app/UserAvatar";
-import { FaHome, FaUser, FaEnvelope, FaBell, FaCog, FaUsers, FaCalendar, FaCompass, FaMoon, FaSun, FaHeart, FaComment, FaShare, FaEdit, FaEllipsisH, FaFacebookF, FaTwitter, FaInstagram, FaLinkedinIn, FaPaperclip, FaSmile } from "react-icons/fa";
+import {  FaHeart, FaComment, FaShare, FaEllipsisH, FaPaperclip, FaSmile } from "react-icons/fa";
 import { useDarkMode } from "@/Context/DarkModeContext";
 import Attachment from "../attachments/Attachment";
-import PostActions from "../postActions/PostActions";
 import { IoMdSend } from "react-icons/io";
 import { useState } from "react";
 import EmojiPicker from "emoji-picker-react";

@@ -1,36 +1,40 @@
 import React, { useState } from "react";
-import {  FaPlus, FaImage, FaVideo, FaMapMarkerAlt, FaUserTag } from "react-icons/fa";
-
+import {  FaPlus } from "react-icons/fa";
+import { useEffect } from "react";
 import 'react-toastify/dist/ReactToastify.css';
 import Post from "@/Components/post/Post";
 import CreatePost from "@/Components/createPost/CreatePost";
-const Content = ({user, posts}) => {
+
+const Content = ({user, initialPosts}) => {
     const [newStory, setNewStory] = useState("");
+    const [posts, setPosts] = useState([]);
 
-    
   const [mediaPreview, setMediaPreview] = useState(null);
-  const   [newPost,  setNewPost] = useState({
-    content: "",
-    media: null,
-  });
+ 
 
+  useEffect(() => {
+    console.log('Initial posts:', initialPosts); 
+    setPosts(initialPosts); 
+}, [initialPosts]);
 
-   
-    
-     
-    
-     
+    const handlePostSubmit = ()  => {
+      if(newPost.content.trim() || newPost.media){
+        const updatedPosts = [
+          ...posts,
+          {
 
-      const handlePostSubmit = ()  => {
-        if(newPost.content.trim() || newPost.media){
-          const updatedPosts = [
-            ...posts,
-            {
-
-            }
-          ]
-        }
+          }
+        ]
       }
+    }
+
+    useEffect(() => {
+      const channel = Echo.private(`user-feed.${user.id}`)
+          .listen('PostCreated', (e) => {
+              console.log('New post by a friend:', e.post);
+              setPosts((prevPosts) => [e.post, ...prevPosts]); 
+          });
+  }, [user.id]);
     return (
         
         <>

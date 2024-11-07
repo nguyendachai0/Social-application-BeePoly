@@ -41,7 +41,7 @@ class PostRepository implements PostRepositoryInterface
     }
     public function getPostById($id)
     {
-        return $this->post->findOrFail($id);
+        return $this->post->with(['user', 'attachments', 'reactions', 'comments'])->findOrFail($id);
     }
     public function updatePost($id, array $data)
     {
