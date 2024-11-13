@@ -23,7 +23,11 @@ const Home = ({ auth }) => {
     }, []);
 
     return (
+        <div className="col-span-6">
+        <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">       
         <Content user={auth?.user} initialPosts={posts} />
+        </div>
+        </div>
     );
 };
 

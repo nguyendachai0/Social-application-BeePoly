@@ -19,9 +19,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('reactions',  function (Blueprint $table) {
-            $table->foreignId('message_id')->nullable()->constrained('messages')->onDelete('cascade');
-        });
+        Schema::table('reactions',  function (Blueprint $table) {});
     }
 
     /**
@@ -29,11 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('reactions', function (Blueprint $table) {
-            $table->dropForeign(['message_id']);
-            $table->dropColumn('message_id');
-        });
-
         Schema::dropIfExists('messages');
     }
 };

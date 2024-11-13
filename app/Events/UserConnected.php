@@ -23,10 +23,10 @@ class UserConnected implements ShouldBroadcastNow
     {
         $this->channelName = $channelName;
         $this->userId = $userId;
-        Log::info('User connected to channel:', [
-            'user_id' => $userId,
-            'channel' => $channelName
-        ]);
+        // Log::info('User connected to channel:', [
+        //     'user_id' => $userId,
+        //     'channel' => $channelName
+        // ]);
     }
 
     public function broadcastOn()

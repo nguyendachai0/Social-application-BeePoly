@@ -50,12 +50,8 @@ Broadcast::channel('user-connected.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('user-posted.{id}', function ($user, $id) {
-    Log::info(
-        'User has just posted',
-        ['user_id' => $id, 'channel' => "user-posted.{$id}"]
-    );
-    return (int) $user->id === (int) $id || $user->friends()->where('id', $id)->exists();
+Broadcast::channel('post-comments.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
 });
 
 Broadcast::channel('user-feed.{userId}', function ($user, $userId) {
