@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Models\Conversation;
+use App\Models\Notification;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -33,7 +35,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user =  $request->user();
-        Log::info($user);
+        // Log::info($user);
         return [
             ...parent::share($request),
             'auth' => [
@@ -41,6 +43,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'conversations' => Auth::id() ? Conversation::getConversationsForSideBar(Auth::user()) : [],
             'friends' =>  $user ? $user->friends : [],
+            'notifications' => $user ? Notification::loadNotificationsForUser($user->id) : []
         ];
     }
 }

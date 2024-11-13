@@ -1,29 +1,26 @@
 import React from 'react';
+import strategyFactory from './StrategyFactory';
 
-const Attachment = ({ attachments }) => {
+
+const Attachment = ({ attachments, type=null, baseClass='' }) => {
+
   if (!attachments || attachments.length === 0) return null;
+
+  const getClassNames = (baseClass) => {
+    switch (type) {
+      case 'comment':
+        return `max-w-[200px] h-[150px] object-cover rounded-lg`; 
+      case 'post':
+        return `${baseClass} w-full h-full`; 
+      default:
+        return `${baseClass} w-full h-96`; 
+    }
+  };
 
   return attachments.map((attachment, index) => {
     const { mime: mime_type, path: url } = attachment;
-    if (mime_type.startsWith('image/')) {
-      return <img key={index} className="postImg w-full h-64 object-cover mb-4 rounded-lg" src={url} alt="Attachment" />;
-    }
-    
-    if (mime_type.startsWith('video/')) {
-      return <video key={index} className="postVideo" controls>
-        <source src={url} type={mime_type} />
-        Your browser does not support the video tag.
-      </video>;
-    }
-
-    if (mime_type.startsWith('audio/')) {
-      return <audio key={index} className="postAudio" controls>
-        <source src={url} type={mime_type} />
-        Your browser does not support the audio element.
-      </audio>;
-    }
-
-    return <a key={index} href={url} className="postAttachment" download>Download Attachment</a>;
+    const Strategy = strategyFactory(mime_type);
+    return <Strategy key={index} url={url} mime_type={mime_type} className={getClassNames(baseClass)} />;
   });
 };
 

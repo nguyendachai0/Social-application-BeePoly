@@ -13,11 +13,9 @@ const Layout = ({ children, showLeftBar = true, showRightBar = true}) => {
         <>
             <Navbar />
             <ToastContainer />
-            <div className="container mx-auto px-4 pb-8 flex">
+            <div className="grid grid-cols-12 gap-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
                  {showLeftBar  && (<LeftBar user={props.auth?.user} />)}
-                <div style={{ flex: 6 }}>
                     {children}
-                </div>
                 {showRightBar && (<RightBar />)}
             </div>
         </>

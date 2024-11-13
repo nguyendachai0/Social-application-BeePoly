@@ -20,7 +20,6 @@ const RightBar = () => {
         return friends.filter(friend => 
             onlineUserIds.includes(friend.id.toString())
         );
-
     }
 
     const handleUserInput = (e) => {
@@ -79,14 +78,14 @@ const RightBar = () => {
     return ( 
         <>
             
-            <aside className="w-1/5 ml-8 hidden lg:block">
+            <div className="col-span-3">
           <div className={`${darkMode ? "bg-gray-800" : "bg-white"} rounded-lg shadow-md p-4 mb-8`}>
             <h2 className="text-xl font-semibold mb-4">Who's Online</h2>
             <ul className="space-y-4">
               {onlineFriends.map((friend) => (
                 <li key={friend.id} className="flex items-center space-x-2">
                   <div className="relative">
-                    <UserAvatar user={friend}/>
+                    <UserAvatar  online={true} user={friend}/>
                     <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
                   </div>
                   <span>{friend.first_name} {friend.sur_name}</span>
@@ -130,7 +129,7 @@ const RightBar = () => {
               <a href="#" className="text-blue-700 hover:text-blue-800 transition duration-300"><FaLinkedinIn /></a>
             </div>
           </div>
-        </aside>
+        </div>
         </>
 
     );

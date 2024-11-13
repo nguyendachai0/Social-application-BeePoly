@@ -56,28 +56,36 @@ class User extends Authenticatable
         ];
     }
 
-
     public function groups()
     {
         return $this->belongsToMany(Group::class, 'group_users');
     }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class, 'user_id');
+    }
+
     public function friendsOfThisUser()
     {
         return $this->belongsToMany(User::class, 'friend_requests', 'sender_id', 'receiver_id')
             ->withPivot('status')
             ->wherePivot('status', 'accepted');
     }
+
     protected function thisUserFriendOf()
     {
         return $this->belongsToMany(User::class, 'friend_requests', 'receiver_id', 'sender_id')
             ->withPivot('status')
             ->wherePivot('status', 'accepted');
     }
+
     protected function getFriendsAttribute()
     {
         if (!array_key_exists('friends', $this->relations)) $this->loadFriends();
         return $this->getRelation('friends');
     }
+
     protected function loadFriends()
     {
         if (!array_key_exists('friends', $this->relations)) {
@@ -85,6 +93,7 @@ class User extends Authenticatable
             $this->setRelation('friends', $friends);
         }
     }
+
     protected function mergeFriends()
     {
         $friendOfThisUser = ($this->friendsOfThisUser)  ?? collect();
@@ -95,8 +104,6 @@ class User extends Authenticatable
             return  $thisUserFriendOf->toUserArray();
         }));
     }
-
-
 
     public static function getUserExceptUser(User $user)
     {
@@ -129,6 +136,7 @@ class User extends Authenticatable
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'sur_name' => $this->sur_name,
+            'name' => $this->fullName,
             'is_group' => false,
             'is_user' => true,
             'is_admin' =>  (bool) $this->is_admin,
@@ -136,10 +144,10 @@ class User extends Authenticatable
             'updated_at' => $this->updated_at,
             'blocked_at' => $this->blocked_at,
             'last_message' => $this->last_message,
-            'last_message_date' => $this->last_message_date ? ($this->last_message_date . ' UTC') : null,
-
+            'last_message_date' => $this->last_message_date ? ($this->last_message_date) : null,
         ];
     }
+
     public function  toUserArray()
     {
         return [
@@ -153,5 +161,10 @@ class User extends Authenticatable
             'sur_name' => $this->sur_name,
             'is_admin' => $this->is_admin == 1 ? True : False,
         ];
+    }
+
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->sur_name;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Comment;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -10,27 +11,23 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
-class UserConnectedToGroup implements ShouldBroadcastNow
+class CommentPosted implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $user;
-    public $groupId;
+
+    public $comment;
+    public $postOwnerId;
     /**
      * Create a new event instance.
      */
-    public function __construct(User $user, int $groupId)
+    public function __construct(Comment $comment, $postOwnerId)
     {
-        $this->user = $user;
-        $this->groupId = $groupId;
-        // Log::info('User and groupId in constructor', [
-        //     'user' => $user->toArray(), // Convert the User object to an array for logging
-        //     'groupId' => $groupId,
-        // ]);
+        Log::info(['comment' => $comment, 'postOwnerId' => $postOwnerId]);
+        $this->comment = $comment;
+        $this->postOwnerId = $postOwnerId;
     }
-
     /**
      * Get the channels the event should broadcast on.
      *
@@ -38,14 +35,18 @@ class UserConnectedToGroup implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return  new PrivateChannel('message.group.' . $this->groupId);
+        return new PrivateChannel('post-comments.' . $this->postOwnerId);
     }
 
+    /**
+     * Get the data to broadcast.
+     *
+     * @return array
+     */
     public function broadcastWith()
     {
         return [
-            'user' => $this->user->only(['id', 'first_name', 'last_name']),
-            'groupId' => $this->groupId,
+            'comment' => $this->comment->load(['user', 'attachments'])->toArray(),
         ];
     }
 }
