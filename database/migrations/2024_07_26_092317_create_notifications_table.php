@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('comment_id')->nullable()->constrained('comments')->onDelete('cascade');
             $table->foreignId('message_id')->nullable()->constrained('messages')->onDelete('cascade');
             $table->foreignId('group_id')->nullable()->constrained('groups')->onDelete('cascade');
+            $table->foreignId('reaction_id')->nullable()->constrained('reactions')->onDelete('cascade');
             $table->enum('status', ['new', 'read'])->default('new');
             $table->timestamps();
         });

@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
 
             $table->foreignId('post_id')->nullable()->constrained('posts')->onDelete('cascade');
-            $table->foreignId('story_id')->nullable()->constrained('stories')->onDelete('cascade');
             $table->foreignId('comment_id')->nullable()->constrained('comments')->onDelete('cascade');
             $table->foreignId('share_id')->nullable()->constrained('shares')->onDelete('cascade');
             $table->foreignId('message_id')->nullable()->constrained('messages')->onDelete('cascade');
@@ -27,7 +26,6 @@ return new class extends Migration
 
             $table->unique(['user_id', 'post_id']);
             $table->unique(['user_id', 'comment_id']);
-            $table->unique(['user_id', 'story_id']);
             $table->unique(['user_id', 'share_id']);
             $table->unique(['user_id', 'message_id']);
         });
