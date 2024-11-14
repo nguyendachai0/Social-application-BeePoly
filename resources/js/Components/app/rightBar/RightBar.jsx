@@ -79,7 +79,7 @@ const RightBar = () => {
         <>
             
             <div className="col-span-3">
-          <div className={`${darkMode ? "bg-gray-800" : "bg-white"} rounded-lg shadow-md p-4 mb-8`}>
+          <div className={`${darkMode ? "bg-gray-800" : "bg-white"} rounded-lg shadow-md p-4 mt-4 mb-8`}>
             <h2 className="text-xl font-semibold mb-4">Who's Online</h2>
             <ul className="space-y-4">
               {onlineFriends.map((friend) => (

@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->string('caption')->nullable()->change();
+        Schema::create('statistics', function (Blueprint $table) {
+            $table->id();
+            $table->string('type');
+            $table->integer('value');
+            $table->date('date');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('posts', function (Blueprint $table) {
-            $table->string('caption')->nullable(false)->change();
-        });
+        Schema::dropIfExists('statistics');
     }
 };

@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\AdminContentManagementController;
+use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\AdminUserManagementController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FriendRequestController;
 use App\Http\Controllers\HomeController;
@@ -32,6 +35,12 @@ Route::middleware(['auth',  'verified'])->group(function () {
     Route::post('/posts/{post}/comments', [CommentController::class,  'postComment']);
     Route::get('/posts/{post}/comments', [CommentController::class, 'getCommentsForPost']);
     Route::post('/comments/{comment}/replies', [CommentController::class, 'replyToComment'])->name('comment.reply');
+});
+
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index']);
+    Route::get('/users', [AdminUserManagementController::class, 'index']);
+    Route::get('/contents', [AdminContentManagementController::class, 'index']);
 });
 
 Route::middleware('auth')->group(function () {

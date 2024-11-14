@@ -72,7 +72,7 @@ const CreatePost = () => {
         })
       };
     return (
-        <div className="bg-white rounded-lg shadow p-4 mb-4">
+        <div className="bg-white rounded-lg shadow p-4 mb-4 mt-4">
         <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Create New Post</h3>
         <textarea
           className="w-full p-3 border border-purple-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
