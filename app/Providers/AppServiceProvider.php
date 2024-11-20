@@ -20,6 +20,12 @@ use App\Services\Posts\PostServiceInterface;
 use App\Services\Stories\StoryService;
 use App\Services\Stories\StoryServiceInterface;
 use Illuminate\Support\ServiceProvider;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\EnvironmentCheck;
+use Spatie\Health\Checks\Checks\PingCheck;
+use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
+use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -43,6 +49,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Health::checks([
+            UsedDiskSpaceCheck::new(),
+            DatabaseCheck::new(),
+            EnvironmentCheck::new(),
+            DebugModeCheck::new(),
+            PingCheck::new()
+                ->url('https://google.com')
+                ->name('Is Google reachable?'),
+        ]);
     }
 }

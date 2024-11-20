@@ -47,7 +47,7 @@ class AuthenticatedSessionController extends Controller
         ]);
 
         if ($validator->fails()) {
-            Log::info('Validation errors:', $validator->errors()->all());
+            // Log::info('Validation errors:', $validator->errors()->all());
             return redirect()->back()->withErrors($validator)->withInput();
         }
 

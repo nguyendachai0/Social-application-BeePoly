@@ -43,10 +43,10 @@ Broadcast::channel('friend-request.user.{id}', function ($user, $id) {
 });
 
 Broadcast::channel('user-connected.{id}', function ($user, $id) {
-    Log::info(
-        'Other user also connected',
-        ['user_id' => $id, 'channel' => "user-connected.{$id}"]
-    );
+    // Log::info(
+    //     'Other user also connected',
+    //     ['user_id' => $id, 'channel' => "user-connected.{$id}"]
+    // );
     return (int) $user->id === (int) $id;
 });
 

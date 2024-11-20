@@ -24,7 +24,6 @@ class CommentPosted implements ShouldBroadcastNow
      */
     public function __construct(Comment $comment, $postOwnerId)
     {
-        Log::info(['comment' => $comment, 'postOwnerId' => $postOwnerId]);
         $this->comment = $comment;
         $this->postOwnerId = $postOwnerId;
     }

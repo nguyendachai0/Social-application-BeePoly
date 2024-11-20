@@ -12,6 +12,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\EnvironmentCheck;
+use Spatie\Health\Checks\Checks\PingCheck;
+use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
+use Spatie\Health\Facades\Health;
+use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 Route::middleware(['auth',  'verified'])->group(function () {
     Route::get('/', [HomeController::class,  'home'])->name('dashboard');
@@ -38,9 +45,13 @@ Route::middleware(['auth',  'verified'])->group(function () {
 });
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
-    Route::get('/dashboard', [AdminDashboardController::class, 'index']);
-    Route::get('/users', [AdminUserManagementController::class, 'index']);
+    Route::get('/overview', [AdminDashboardController::class, 'getDashboardData']);
+    Route::get('/users', [AdminUserManagementController::class, 'index'])->name('admin.users.index');
     Route::get('/contents', [AdminContentManagementController::class, 'index']);
+    Route::get('/health', HealthCheckResultsController::class);
+    Route::post('/users/set-inactive', [AdminUserManagementController::class, 'setInactive']);
+    Route::post('/users/set-active', [AdminUserManagementController::class, 'setActive']);
+    Route::post('/users/send-message', [AdminUserManagementController::class, 'sendMessage']);
 });
 
 Route::middleware('auth')->group(function () {

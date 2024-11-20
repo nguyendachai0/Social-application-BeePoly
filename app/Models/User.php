@@ -56,6 +56,16 @@ class User extends Authenticatable
         ];
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_roles');
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->roles->contains('name', $role);
+    }
+
     public function groups()
     {
         return $this->belongsToMany(Group::class, 'group_users');
@@ -155,11 +165,13 @@ class User extends Authenticatable
             'email' => $this->email,
             'date_of_birth' => $this->date_of_birth,
             'avatar' => $this->avatar,
+            'active' => $this->active,
             'banner'  => $this->banner,
             'first_name'  => $this->first_name,
             'last_name' => $this->last_name,
             'sur_name' => $this->sur_name,
-            'is_admin' => $this->is_admin == 1 ? True : False,
+            'created_at' => $this->created_at->format('F j, Y g:i A'),
+            'roles' => $this->roles->pluck('name'),
         ];
     }
 

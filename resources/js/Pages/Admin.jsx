@@ -3,9 +3,15 @@ import { usePage } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import DashboardOverView from "@/Components/DashboardOverview";
 
-const Admin = ({ auth}) => {
+const Admin = ({ stats, userGrowthData, demographicsData, contentStats }) => {
+
     return (
-        <DashboardOverView />
+        <DashboardOverView 
+        stats={stats} 
+        userGrowthData={userGrowthData} 
+        demographicsData={demographicsData} 
+        contentStats={contentStats} 
+        />
     );
 };
 

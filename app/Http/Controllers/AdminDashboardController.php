@@ -5,94 +5,157 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Post;
 use App\Models\Comment;
-
+use App\Models\Reaction;
+use App\Models\Statistic;
+use Carbon\Carbon;
+use Inertia\Inertia;
 use Illuminate\Http\Request;
 
 class AdminDashboardController extends Controller
 {
     public function getDashboardData()
     {
-        $activeUsers = User::where('status', 'active')->count();
-
+        $allUsers = User::count();
         $newSignups = User::where('created_at', '>=', now()->subDays(30))->count();
-
         $contentActivity = Post::count() + Comment::count();
 
-        $userEngagement = $this->getUserEngagementTrends();
 
+        $userGrowthData = $this->getUserGrowthData();
         $demographics = $this->getDemographics();
+        $contentStats = $this->getContentStats();
 
-        $locationStats = $this->getUserLocations();
 
-        return response()->json([
-            'stats' => [
-                [
-                    'title' => 'Active Users',
-                    'value' => $activeUsers,
-                    'change' => '+12%',
-                    'icon' => 'FiUsers',
-                ],
-                [
-                    'title' => 'New Sign-ups',
-                    'value' => $newSignups,
-                    'change' => '+8%',
-                    'icon' => 'FiUserPlus',
-                ],
-                [
-                    'title' => 'Content Activity',
-                    'value' => $contentActivity,
-                    'change' => '+15%',
-                    'icon' => 'FiActivity',
-                ]
+        $stats = [
+            [
+                'title' => 'All Users',
+                'value' => $allUsers,
+                'change' => $this->getChangePercentage('all_users'),
+                'icon' => 'FiUsers',
             ],
-            'userTrendsData' => $userEngagement,
+            [
+                'title' => 'New Sign-ups',
+                'value' => $newSignups,
+                'change' => $this->getChangePercentage('new_signups'),
+                'icon' => 'FiUserPlus',
+            ],
+            [
+                'title' => 'Content Activity',
+                'value' => $contentActivity,
+                'change' => $this->getChangePercentage('content_activity'),
+                'icon' => 'FiActivity',
+            ]
+        ];
+
+        // Pass data to Inertia page
+        return Inertia::render('Admin', [
+            'stats' => $stats,
+            'userGrowthData' => $userGrowthData,
             'demographicsData' => $demographics,
-            'locationData' => $locationStats,
+            'contentStats' => $contentStats,
         ]);
+    }
+
+    private function getChangePercentage($type)
+    {
+        $previousStat = Statistic::where('type', $type)
+            ->whereDate('date', Carbon::today()->subDay())
+            ->first();
+
+        $currentStat = Statistic::where('type', $type)
+            ->whereDate('date', Carbon::today())
+            ->first();
+
+        if (!$previousStat || !$currentStat) {
+            return '0%';
+        }
+
+        $change = $currentStat->value - $previousStat->value;
+        $percentageChange = ($change / $previousStat->value) * 100;
+
+        return ($percentageChange > 0 ? '+' : '') . round($percentageChange, 2) . '%';
     }
 
     private function getDemographics()
     {
-        // Placeholder: You can use data from your users' profiles or other models
+        $ageGroups = User::selectRaw('
+            CASE
+                WHEN TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) < 18 THEN "Under 18"
+                WHEN TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) BETWEEN 18 AND 24 THEN "18-24"
+                WHEN TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) BETWEEN 25 AND 34 THEN "25-34"
+                WHEN TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) BETWEEN 35 AND 44 THEN "35-44"
+                WHEN TIMESTAMPDIFF(YEAR, date_of_birth, CURDATE()) BETWEEN 45 AND 54 THEN "45-54"
+                ELSE "55+"
+            END AS age_group, COUNT(*) AS count')
+            ->groupBy('age_group')
+            ->get();
+
+        $ageGroupLabels = $ageGroups->pluck('age_group')->toArray();
+
+        $ageGroupCounts = $ageGroups->pluck('count')->toArray();
+
+        $ageGroupColors = [
+            'Under 18' => '#FF6384',
+            '18-24' => '#36A2EB',
+            '25-34' => '#FFCE56',
+            '35-44' => '#4BC0C0',
+            '45-54' => '#9966FF',
+            '55+' => '#FF9F40',
+        ];
+
+        $backgroundColors = array_map(function ($ageGroup) use ($ageGroupColors) {
+            return $ageGroupColors[$ageGroup] ?? '#000000';
+        }, $ageGroupLabels);
+
         return [
-            'labels' => ['18-24', '25-34', '35-44', '45-54', '55+'],
+            'labels' => $ageGroupLabels,
             'datasets' => [
                 [
-                    'data' => [30, 25, 20, 15, 10], // Example percentage distribution
-                    'backgroundColor' => ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF'],
+                    'data' => $ageGroupCounts,
+                    'backgroundColor' => $backgroundColors,
                 ]
             ]
         ];
     }
 
-    private function getUserLocations()
+    private function getContentStats()
     {
-        // Example data - you can fetch real data based on the user's location
+        $postCount = Post::count();
+        $commentCount = Comment::count();
+        $reactionCount = Reaction::count();
+
         return [
-            'labels' => ['NA', 'EU', 'ASIA', 'SA', 'AF', 'OC'],
+            'labels' => ['Posts', 'Comments', 'Reactions'],
             'datasets' => [
                 [
-                    'label' => 'Users by Region',
-                    'data' => [4500, 3800, 3200, 2100, 1800, 1200],
-                    'backgroundColor' => 'rgba(54, 162, 235, 0.5)',
+                    'label' => 'Content Stats',
+                    'data' => [$postCount, $commentCount, $reactionCount],
+                    'backgroundColor' => ['#FF6384', '#36A2EB', '#FFCE56'],
                 ]
             ]
         ];
     }
 
-    private function getUserEngagementTrends()
+    private function getUserGrowthData()
     {
-        // For simplicity, let's assume we're fetching the number of active users per month
-        $months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
-        $engagementData = [65, 59, 80, 81, 56, 55]; // Placeholder for actual data
+        $userGrowth = User::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+
+        $months = $userGrowth->pluck('month')->map(function ($month) {
+            return Carbon::createFromFormat('Y-m', $month)->format('M');
+        })->toArray();
+        $growthCounts = $userGrowth->pluck('count')->toArray();
+
         return [
             'labels' => $months,
             'datasets' => [
                 [
-                    'label' => 'User Engagement',
-                    'data' => $engagementData,
+                    'label' => 'User Growth',
+                    'data' => $growthCounts,
                     'fill' => false,
-                    'borderColor' => 'rgb(75, 192, 192)',
+                    'borderColor' => 'rgb(54, 162, 235)',
+                    'backgroundColor' => 'rgba(54, 162, 235, 0.2)',
                     'tension' => 0.1,
                 ]
             ]

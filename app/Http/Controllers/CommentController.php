@@ -44,7 +44,7 @@ class CommentController extends Controller
             'attachments.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        Log::info(['Validated Data:', $validatedData]);
+        // Log::info(['Validated Data:', $validatedData]);
 
         $attachments = [];
 

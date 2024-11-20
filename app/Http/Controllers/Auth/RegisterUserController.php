@@ -43,7 +43,7 @@ class RegisterUserController extends Controller
 
 
         if ($validator->fails()) {
-            Log::info('Validation errors:', $validator->errors()->all());
+            // Log::info('Validation errors:', $validator->errors()->all());
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
@@ -52,7 +52,6 @@ class RegisterUserController extends Controller
 
         $avatarPath = null;
         if ($request->hasFile('avatar')) {
-            Log::info('heaven');
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
         }
 

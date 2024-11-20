@@ -94,7 +94,7 @@ class Notification extends Model
             ->orderBy('created_at', 'desc')
             ->get();
 
-        Log::info([$notifications]);
+        // Log::info([$notifications]);
 
         return $notifications->map(function ($notification) {
             return [

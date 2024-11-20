@@ -2,10 +2,17 @@ import { useState } from "react";
 import { FiUsers, FiMessageSquare, FiSettings, FiUserPlus, FiActivity} from "react-icons/fi";
 import { BsGlobe } from "react-icons/bs";
 import { MdOutlineContentPaste } from "react-icons/md";
+import { Link } from "@inertiajs/react";
 
 const AdminSidebar = ()  => {
     const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const handleActiveTab = (tab) => {
+    setActiveTab(tab); 
+  };
+
+
     return (
         <div className={`${sidebarOpen ? "w-64" : "w-20"} bg-white shadow-lg transition-all duration-300`}>
         <div className="p-4">
@@ -20,34 +27,38 @@ const AdminSidebar = ()  => {
             </button>
           </div>
           <nav className="mt-8 space-y-4">
-            <button
-              onClick={() => setActiveTab("overview")}
-              className={`flex items-center w-full p-3 rounded-lg ${activeTab === "overview" ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
-            >
-              <FiUsers className="mr-3" />
-              {sidebarOpen && "Overview"}
-            </button>
-            <button
-              onClick={() => setActiveTab("users")}
-              className={`flex items-center w-full p-3 rounded-lg ${activeTab === "users" ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
-            >
-              <FiMessageSquare className="mr-3" />
-              {sidebarOpen && "Users"}
-            </button>
-            <button
-              onClick={() => setActiveTab("content")}
-              className={`flex items-center w-full p-3 rounded-lg ${activeTab === "content" ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
-            >
-              <MdOutlineContentPaste className="mr-3" />
-              {sidebarOpen && "Content"}
-            </button>
-            <button
-              onClick={() => setActiveTab("settings")}
-              className={`flex items-center w-full p-3 rounded-lg ${activeTab === "settings" ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
-            >
-              <FiSettings className="mr-3" />
-              {sidebarOpen && "Settings"}
-            </button>
+          <Link
+            href="/admin/overview"
+            onClick={() => handleActiveTab("overview")}
+            className={`flex items-center w-full p-3 rounded-lg ${activeTab === "overview" ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
+          >
+            <FiUsers className="mr-3" />
+            {sidebarOpen && "Overview"}
+          </Link>
+          <Link
+            href="/admin/users"
+            onClick={() => handleActiveTab("users")}
+            className={`flex items-center w-full p-3 rounded-lg ${activeTab === "users" ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
+          >
+            <FiMessageSquare className="mr-3" />
+            {sidebarOpen && "Users"}
+          </Link>
+          <Link
+            href="/admin/contents"
+            onClick={() => handleActiveTab("content")}
+            className={`flex items-center w-full p-3 rounded-lg ${activeTab === "content" ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
+          >
+            <MdOutlineContentPaste className="mr-3" />
+            {sidebarOpen && "Content"}
+          </Link>
+          <Link
+            href="/admin/settings"
+            onClick={() => handleActiveTab("settings")}
+            className={`flex items-center w-full p-3 rounded-lg ${activeTab === "settings" ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
+          >
+            <FiSettings className="mr-3" />
+            {sidebarOpen && "Settings"}
+          </Link>
           </nav>
         </div>
       </div>

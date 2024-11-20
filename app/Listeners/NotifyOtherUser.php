@@ -13,9 +13,9 @@ class NotifyOtherUser implements ShouldQueue
 
     public function handle(UserConnected $event)
     {
-        Log::info('UserConnected event handled:', [
-            'channel' => $event->channelName,
-            // 'other_user_id' => $event->otherUserId
-        ]);
+        // Log::info('UserConnected event handled:', [
+        //     'channel' => $event->channelName,
+        //     // 'other_user_id' => $event->otherUserId
+        // ]);
     }
 }
