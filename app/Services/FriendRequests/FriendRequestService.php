@@ -15,11 +15,13 @@ class FriendRequestService implements FriendRequestServiceInterface
     {
         $this->friendRequestRepository = $friendRequestRepository;
     }
+
     public function sendFriendRequest($recipientId)
     {
         $senderId = Auth::id();
-        if ($senderId ==  (int) $recipientId) {
-            return  [
+
+        if ($senderId == (int) $recipientId) {
+            return [
                 'success' => false,
                 'message' => 'You cannot send a friend request to yourself.',
                 'countFriends' => $this->friendRequestRepository->getFriendCount($senderId),
@@ -30,32 +32,49 @@ class FriendRequestService implements FriendRequestServiceInterface
         $existingRequest = $this->friendRequestRepository->findBySenderOrReceiverIds($senderId, $recipientId);
 
         if ($existingRequest) {
-            if ($existingRequest->status  ===  'rejected') {
+            if ($existingRequest->sender_id === $senderId) {
+                // Case: Sender already sent a request -> Update status to 'pending'
+                $this->friendRequestRepository->updateStatus($existingRequest, 'pending');
+
+                return [
+                    'success' => true,
+                    'message' => 'Friend request updated to pending.',
+                    'countFriends' => $this->friendRequestRepository->getFriendCount($senderId),
+                    'friendRequest' => $this->friendRequestRepository->getFriendRequest($senderId, $recipientId),
+                ];
+            }
+
+            if ($existingRequest->sender_id === $recipientId && $existingRequest->status === 'rejected') {
+                // Case: Recipient rejected previously -> Update status to 'accepted'
                 $this->friendRequestRepository->updateStatus($existingRequest, 'accepted');
+
                 return [
                     'success' => true,
                     'message' => 'Friend request re-accepted.',
-                    'countFriend' => $this->friendRequestRepository->getFriendCount($senderId),
-                    'friendRequest' => $this->friendRequestRepository->getFriendRequest($senderId, $recipientId)
+                    'countFriends' => $this->friendRequestRepository->getFriendCount($senderId),
+                    'friendRequest' => $this->friendRequestRepository->getFriendRequest($senderId, $recipientId),
                 ];
             }
+
             return [
                 'success' => false,
-                'message' => 'Friend Request already exists',
-                'countFriend' => $this->friendRequestRepository->getFriendCount($senderId),
-                'friendRequest' => $this->friendRequestRepository->getFriendRequest($senderId, $recipientId)
+                'message' => 'Friend request already exists.',
+                'countFriends' => $this->friendRequestRepository->getFriendCount($senderId),
+                'friendRequest' => $this->friendRequestRepository->getFriendRequest($senderId, $recipientId),
             ];
         }
 
+        // Case: No existing request -> Create new request
         $this->friendRequestRepository->createFriendRequest($senderId, $recipientId);
 
         return [
             'success' => true,
-            'message' => 'Friend request sent successfully',
-            'countFriend' => $this->friendRequestRepository->getFriendCount($senderId),
-            'friendRequest' => $this->friendRequestRepository->getFriendRequest($senderId,  $recipientId)
+            'message' => 'Friend request sent successfully.',
+            'countFriends' => $this->friendRequestRepository->getFriendCount($senderId),
+            'friendRequest' => $this->friendRequestRepository->getFriendRequest($senderId, $recipientId),
         ];
     }
+
     public function cancelFriendRequest($recipientId)
     {
         $senderId = Auth::id();

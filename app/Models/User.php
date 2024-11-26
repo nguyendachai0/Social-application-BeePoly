@@ -30,7 +30,8 @@ class User extends Authenticatable
         'is_admin',
         'mobile',
         'gender',
-        'avatar'
+        'avatar',
+        'address'
     ];
 
     /**
@@ -76,6 +77,13 @@ class User extends Authenticatable
         return $this->hasMany(Notification::class, 'user_id');
     }
 
+    public function followers()
+    {
+        return $this->belongsToMany(User::class, 'friend_requests', 'receiver_id', 'sender_id')
+            ->wherePivotIn('status', ['rejected', 'pending']);
+    }
+
+
     public function friendsOfThisUser()
     {
         return $this->belongsToMany(User::class, 'friend_requests', 'sender_id', 'receiver_id')
@@ -119,10 +127,10 @@ class User extends Authenticatable
     {
         $userId = $user->id;
         $query = User::select(['users.*', 'messages.message as last_message', 'messages.created_at as last_message_date'])
-            ->where('users.id', '!=', $userId)
-            ->when(!$user->is_admin, function ($query) {
-                $query->whereNull('users.blocked_at');
-            })
+            // ->where('users.id', '!=', $userId)
+            // ->when(!$user->is_admin, function ($query) {
+            //     $query->whereNull('users.blocked_at');
+            // })
             ->leftJoin('conversations', function ($join) use ($userId) {
                 $join->on('conversations.user_id1', '=',  'users.id')
                     ->where('conversations.user_id2', '=', $userId)
@@ -132,6 +140,8 @@ class User extends Authenticatable
                     });
             })
             ->leftJoin('messages', 'messages.id', '=', 'conversations.last_message_id')
+            ->where('users.id', '!=', $userId)
+            ->whereNotNull('messages.id')
             ->orderByRaw('IFNULL(users.blocked_at, 1)')
             ->orderBy('messages.created_at',  'desc')
             ->orderBY('users.first_name');

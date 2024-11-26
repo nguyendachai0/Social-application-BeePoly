@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Repositories\FriendRequests\FriendRequestRepositoryInterface;
 use App\Services\Posts\PostServiceInterface;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,38 +24,64 @@ class UserController extends Controller
 
     public function profile($email)
     {
-        $user = User::where('email', $email)->firstOrFail();
-        $senderId = auth()->id();
-        $recipientId = $user->id;
-        $countFriends = count($user->friends);
-        $friendRequest = $this->friendRequestRepository->findBySenderOrReceiverIds($senderId, $recipientId);
-        $posts = $this->postService->getUserPosts($user->id);
+        $profile = User::withCount('followers')
+            ->where('email', $email)->firstOrFail();
+
+        $authUserId = auth()->id();
+        $profileId = $profile->id;
+
+        $friendRequest = $this->friendRequestRepository->findBySenderOrReceiverIds($authUserId, $profileId);
+
+        $friendStatus = 'not_friends';
+
+        if ($friendRequest) {
+            if ($friendRequest->status === 'accepted') {
+                $friendStatus = 'friends';
+            } elseif ($friendRequest->status === 'rejected') {
+                $friendStatus = 'request_rejected';
+            } elseif ($friendRequest->sender_id === $authUserId) {
+                $friendStatus = 'request_sent';
+            } elseif ($friendRequest->receiver_id === $authUserId) {
+                $friendStatus = 'request_received';
+            }
+        }
+
+        $posts = $this->postService->getUserPosts($profile->id);
+
         return Inertia::render('ProfilePage', [
-            'profile' => $user,
-            'countFriends' => $countFriends,
+            'profile' => $profile,
+            'isOwner' => $authUserId === $profileId,
+            'initialProfileFriends' =>  $profile->friends,
+            'countFriends' => count($profile->friends),
+            'countFollowers' => $profile->followers_count  + count($profile->friends),
             'friendRequest' => $friendRequest,
-            'posts' => $posts
+            'friendStatus' => $friendStatus,
+            'posts' => $posts,
+            'countPosts'  =>  count($posts),
         ]);
     }
 
-    public function uploadImage(Request $request)
+    public function uploadAvatarOrBanner(Request $request, $type)
     {
         $request->validate([
-            'image' => 'required|image|mimes:jpeg, png, jpg, gif|max:2048',
-            'type'  => 'required|in:avatar,banner'
+            'file' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
+        $file = $request->file('file');
+
+        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+
+        $path = $file->storeAs($type . 's', $filename, 'public');
+
         $user = auth()->user();
-        $image  = $request->file('image');
-        $type = $request->input('type');
 
-        $imageName = time() .  '.'  . $image->extension();
+        if ($user->$type && Storage::disk('public')->exists($user->$type)) {
+            Storage::disk('public')->delete($user->$type);
+        }
 
-        $imagePath  = $image->storeAs('public/' . $type . 's',  $imageName);
-
-        $user->{$type} =  $imageName;
+        $user->$type = $path;
         $user->save();
 
-        return response()->json(['success' => true, 'message' => ucfirst($type) . ' updated successfully!', 'image_url' => Storage::url($imagePath)]);
+        return redirect()->back()->with('success', 'Uploaded ' . $type . ' successfully');
     }
 }

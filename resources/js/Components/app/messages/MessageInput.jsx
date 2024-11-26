@@ -5,9 +5,9 @@ import  {
     PhotoIcon,
     FaceSmileIcon,
     HandThumbUpIcon,
-    PaperAirplaneIcon,
     XCircleIcon,
 } from "@heroicons/react/24/solid";
+import { FaPaperPlane } from "react-icons/fa";
 import NewMessageInput from "./NewMessageInput";
 import EmojiPicker from "emoji-picker-react";
 import { Popover } from "@headlessui/react";
@@ -126,15 +126,16 @@ const MessageInput =  ({ conversation = null }) => {
     return (
         <div className="flex flex-wrap items-start border-t border-slate-700 py-3">
             <div className="order-2 flex-1 xs:flex-none xs:order-1 p-2">
-                <button className="p-1 text-gray-400 hover:text-gray-300 relative">
+                <button className="p-1 text-gray-400 hover:text-pink-400 transition-colors relative">
                     <PaperClipIcon className="w-6" />
                     <input type="file" onChange={onFileChange} multiple  className="absolute left-0 top-0 right-0 bottom-0 z-20 opacity-0 cursor-pointer" />
                 </button>
-                <button className="p-1 text-gray-400 hover:text-gray-300 relative">
+                <button className="p-1 text-gray-400 hover:text-pink-400 transition-colors relative">
                     <PhotoIcon className="w-6"></PhotoIcon>
                     <input type="file" onChange={onFileChange} multiple accept="image/*" className="absolute left-0 top-0 right-0 bottom-0 z-20 opacity-0 cursor-pointer" />
                 </button>
-                <AudioRecorder fileReady={recordedAudioready}/>
+                
+                <AudioRecorder  fileReady={recordedAudioready}/>
             </div>
             <div className="order-1 px-3 xs:p-0 min-w-[220px] basis-full xs:basis-0 xs:order-2 flex-1 relative">
                 <div className="flex">
@@ -143,13 +144,12 @@ const MessageInput =  ({ conversation = null }) => {
                     onChange={(ev) =>   setNewMessage(ev.target.value)}
                     />
                     <button  onClick={onSendClick}
-                    disabled={messageSending} className="btn btn-info rounded-l-none">
-                        <PaperAirplaneIcon className="w-6" />
-                        <span className="hidden sm:inline">Send</span>
+                    disabled={messageSending} className="p-2 text-purple-400 hover:text-purple-600 transition-colors disabled:opacity-50">
+                        <FaPaperPlane className="text-xl" />
                     </button>
                 </div>
                 {!!uploadProgress &&  (
-                    <progress className="progress progress-info w-full" value={uploadProgress} max="100">
+                    <progress className="progress progress-success w-full bg-gradient-to-r from-purple-600 to-pink-600" value={uploadProgress} max="100">
                         
                     </progress>
                 )}
@@ -188,7 +188,7 @@ const MessageInput =  ({ conversation = null }) => {
                                 )
                             )
                     }
-                        className="absolute w-6 h-6  rounded-full bg-gray-800 -right-2 -top-2 text-gray-300 hover:text-gray-100 z-10">
+                        className="absolute w-6 h-6  rounded-full bg-gray-800 -right-2 -top-2 text-gray-300 hover:text-purple-400 transition-colors">
                         <XCircleIcon className="w-6"/>
                         </button>
 
@@ -198,7 +198,7 @@ const MessageInput =  ({ conversation = null }) => {
                 </div>
             <div className="order-3 xs:order-3 p-2 flex">
                 <Popover className="relative">
-                    <Popover.Button className="p-1 text-gray-400 hover:text-gray-300">
+                    <Popover.Button className="p-1 text-gray-400 hover:text-purple-400 transition-colors">
                         <FaceSmileIcon className="w-6 h-6" />
                     </Popover.Button>
                     <Popover.Panel className="absolute  z-10 right-0 bottom-full">
@@ -211,7 +211,7 @@ const MessageInput =  ({ conversation = null }) => {
                         </EmojiPicker>
                     </Popover.Panel>
                 </Popover>
-                <button onClick={onLikeClick} className="p-1 text-gray-400 hover:text-gray-300">
+                <button onClick={onLikeClick} className="p-1 text-gray-400 hover:text-purple-400 transition-colors">
                     <HandThumbUpIcon className="w-6 h-6"></HandThumbUpIcon>
                 </button>
             </div>

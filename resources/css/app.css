@@ -2,6 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
-/* src/styles/App.css */
-/* styles.css or a similar CSS file */
+::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: linear-gradient(to bottom, #E0E7FF, #EDE9FE, #FCE7F3);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #A5B4FC, #C4B5FD, #F9A8D4);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #8196ff, #a690ff, #f979bf);
+  }
 
+  /* For the overall progress bar background */
+progress {
+  width: 100%;
+  height: 20px; /* Adjust height as needed */
+  border-radius: 10px; /* Makes the bar rounded */
+  overflow: hidden;
+  appearance: none;
+}
+
+/* Webkit-specific styles */
+progress::-webkit-progress-bar {
+  background: #e0e0e0; /* Gray background */
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+progress::-webkit-progress-value {
+  background: linear-gradient(to right, #8e44ad, #e91e63); /* Purple to pink gradient */
+  border-radius: 10px; /* Matches the outer border */
+  transition: width 0.2s ease-in-out; /* Smooth animation */
+}
+
+/* Firefox-specific styles */
+progress::-moz-progress-bar {
+  background: linear-gradient(to right, #8e44ad, #e91e63); /* Purple to pink gradient */
+  border-radius: 10px;
+}
+
+/* IE/Edge styles */
+progress::-ms-fill {
+  background: linear-gradient(to right, #8e44ad, #e91e63);
+  border-radius: 10px;
+}

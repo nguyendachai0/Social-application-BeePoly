@@ -50,7 +50,7 @@ const AudioRecorder = ({fileReady}) => {
         }
    }
     return (
-        <button onClick={onMicrophoneClick} className="p-1 text-gray-400 hover:text-gray-200">
+        <button onClick={onMicrophoneClick} className="p-1 text-gray-400 hover:text-pink-400 transition-colors">
             {recording && <StopCircleIcon className="w-6  text-red-600"/>}
             {!recording && <MicrophoneIcon className="w-6"/>}
         </button>

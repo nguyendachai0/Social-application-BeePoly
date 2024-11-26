@@ -1,5 +1,6 @@
 import {  useEffect, useRef, useState } from "react";
 import "./navBar.scss";
+import { router } from "@inertiajs/react";
 import { Link, usePage } from "@inertiajs/react";
 import { formatMessageDateShort } from "@/helpers";
 import ChatLayout from "../chatLayout/ChatLayout";
@@ -7,8 +8,8 @@ import { useEventBus } from "@/EventBus";
 import UserAvatar from "../UserAvatar";
 import GroupAvatar from "../GroupAvatar";
 import { GiBee } from "react-icons/gi";
-import { FaUser, FaEnvelope, FaBell, FaSearch, FaHeart, FaComment, FaChevronDown } from "react-icons/fa";
-
+import { FaUser, FaSignOutAlt, FaEnvelope, FaBell, FaSearch, FaHeart, FaComment, FaChevronDown, FaUsers } from "react-icons/fa";
+import CreateGroupChat from "../CreateGroupChat";
 
 
     const Navbar = () => {
@@ -24,7 +25,19 @@ import { FaUser, FaEnvelope, FaBell, FaSearch, FaHeart, FaComment, FaChevronDown
         const [hiddenConversations, setHiddenConversations] = useState({});
         const [searchQuery, setSearchQuery] = useState("");
         const [notifications, setNotifications] = useState(page.props.notifications);
-        console.log('notifcations', notifications);
+        const [showProfileMenu, setShowProfileMenu] = useState(false);
+        const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
+        
+
+
+        const handleLogout = () => {
+          router.post(route('logout'), {}, {
+            onStart: () => console.log('Logging out...'),
+            onSuccess: () => console.log('Successfully logged out!'),
+            onError: (error) => console.error('Logout error:', error),
+          });
+        };
+        console.log('conversations', conversations);
         notifications.map((notification) => ( 
           console.log(
             'noti',notification.content)
@@ -269,8 +282,31 @@ import { FaUser, FaEnvelope, FaBell, FaSearch, FaHeart, FaComment, FaChevronDown
             Echo.leave(friendRequestChannel);
         };
     }, [user.id]);
+
+    const handleFriendSelection = (friendId) => {
+      setSelectedFriends(prev => {
+        if (prev.includes(friendId)) {
+          return prev.filter(id => id !== friendId);
+        }
+        return [...prev, friendId];
+      });
+    };
+  
+    const handleCreateGroup = () => {
+      if (groupName && selectedFriends.length >= 2) {
+        console.log("Creating group:", {
+          name: groupName,
+          members: selectedFriends
+        });
+        setShowModal(false);
+        setGroupName("");
+        setSelectedFriends([]);
+      }
+    };
+  
       
     return (
+      <>
 <nav className="sticky top-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 shadow-lg z-50">
                 <div className="max-w-7xl mx-auto px-4">
                   <div className="flex justify-between items-center h-20">
@@ -285,7 +321,6 @@ import { FaUser, FaEnvelope, FaBell, FaSearch, FaHeart, FaComment, FaChevronDown
                     </div>
                     <div className="hidden md:flex items-center space-x-8">
                       <NavLink icon={<GiBee className="text-xl" />} text="Home" />
-                      <NavLink icon={<FaUser className="text-xl" />} text="Profile" />
                       <details className="dropdown dropdown-end" id="conversationMenu">
    <summary className="flex items-center space-x-2 text-white hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">                   
    <FaEnvelope className="text-xl" />
@@ -385,6 +420,46 @@ import { FaUser, FaEnvelope, FaBell, FaSearch, FaHeart, FaComment, FaChevronDown
                           </div>
                         )}
                       </div>
+                      <div className="relative">
+              <button
+                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                className="flex items-center space-x-2 text-white hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+              >
+                <UserAvatar user={user} size="small" />
+                <FaChevronDown className="text-sm" />
+              </button>
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl overflow-hidden z-50 border border-purple-200">
+                  <div className="p-4 border-b border-purple-100">
+                    <div className="flex items-center space-x-3">
+                     <UserAvatar user={user} size="small" />
+                      <div>
+                        <h3 className="font-semibold text-gray-800">John Doe</h3>
+                        <p className="text-sm text-gray-500">john@example.com</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="py-2">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full px-4 py-2 text-left text-red-600 hover:bg-red-50 flex items-center space-x-2"
+                    >
+                      <FaSignOutAlt />
+                      <span>Logout</span>
+                    </button>
+                  </div>
+                  <div className="p-4">
+                <button
+                  onClick={() => setShowCreateGroupModal(true)}
+                  className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors"
+                >
+                  <FaUsers className="text-lg" />
+                  <span>Create Group Chat</span>
+                </button>
+                  </div>
+                </div>
+              )}
+            </div>
                     </div>
                     <button
                       className="md:hidden text-white"
@@ -424,7 +499,7 @@ import { FaUser, FaEnvelope, FaBell, FaSearch, FaHeart, FaComment, FaChevronDown
                     className="mb-2 cursor-pointer"
                     onClick={() => handleChatHide(conversation.id)}>
                 {conversation.is_user  && <UserAvatar user={conversation} profile={true} className="mr-2"/>}
-                {conversation.is_group  && <GroupAvatar group={conversation} size={40} className="mr-2"/>}
+                {conversation.is_group  && <GroupAvatar group={conversation} className="mr-2"/>}
                 </div>
                 )
             })}
@@ -432,6 +507,11 @@ import { FaUser, FaEnvelope, FaBell, FaSearch, FaHeart, FaComment, FaChevronDown
         </>
       )}
               </nav>
+              {showCreateGroupModal && (
+                <CreateGroupChat setShowCreateGroupModal={setShowCreateGroupModal} />
+)}
+              </>
+            
     );
   
     }

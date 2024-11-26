@@ -8,6 +8,7 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
         './resources/js/**/*.jsx',
+        './resources/css/**/*.css',
     ],
 
     theme: {
@@ -17,7 +18,7 @@ export default {
             },
         },
     },
-    plugins: [forms, require("daisyui")],
+    // plugins: [forms, require("daisyui")],
     daisyui: {
         themes: ["light"], // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]
       },

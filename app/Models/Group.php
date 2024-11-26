@@ -10,6 +10,7 @@ class Group extends Model
     use HasFactory;
     protected $fillable = [
         'name',
+        'avatar',
         'description',
         'owner_id',
         'last_message_id',
@@ -42,7 +43,6 @@ class Group extends Model
             ->where('group_users.user_id', $user->id)
             ->orderBy('messages.created_at', 'desc')
             ->orderBy('groups.name');
-
         return $query->get();
     }
 
@@ -52,6 +52,7 @@ class Group extends Model
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'avatar' => $this->avatar,
             'is_group' => true,
             'is_user' => false,
             'owner_id' => $this->owner_id,

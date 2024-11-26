@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Conversation extends Model
 {
@@ -32,6 +33,7 @@ class Conversation extends Model
     {
         $users = User::getUserExceptUser($exceptUser);
         $groups = Group::getGroupsForUser($exceptUser);
+        Log::info(['group' => $groups]);
         return $users->map(function (User $user) {
             return $user->toConversationArray();
         })->concat($groups->map(function (Group $group) {

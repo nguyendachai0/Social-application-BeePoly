@@ -8,7 +8,8 @@ import { useEventBus } from '@/EventBus';
 import MessageAttachments from '../messages/MessageAttachments';
 import AttachmentPreviewModal from '../messages/AttachmentPreviewModal';
 import { FaPhone, FaVideo, FaTimes, FaMinus } from 'react-icons/fa';
-FaPhone
+import { formatMessageDateShort } from '@/helpers';
+
 
 const ChatLayout = ({ conversation, newMessage = null, onClose = () => {}, onHide = () => {}, isHidden }) => {
   const page = usePage();
@@ -99,10 +100,12 @@ const ChatLayout = ({ conversation, newMessage = null, onClose = () => {}, onHid
     
     <div className="fixed bottom-4 right-4 w-96 bg-white/95 backdrop-blur-lg rounded-lg shadow-2xl z-50 border border-purple-200">
                 <div className="p-4 border-b flex justify-between items-center bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-t-lg">
+                <div className="flex items-center space-x-3">
                 {selectedConversation.is_user && <UserAvatar user={selectedConversation} />}
-      {selectedConversation.is_group && <GroupAvatar />}
+      {selectedConversation.is_group && <GroupAvatar group={selectedConversation} />}
       <div className="flex-1">
         {selectedConversation.is_group ? selectedConversation.name : selectedConversation.first_name}
+      </div>
       </div>
       <div className="flex items-center space-x-2">
                     <button className="p-2 hover:bg-white/20 rounded-full transition-colors">
@@ -125,17 +128,19 @@ const ChatLayout = ({ conversation, newMessage = null, onClose = () => {}, onHid
                     </button>
                   </div>
     </div>
-    <div ref={messagesCtrRef}  className="h-72 overflow-y-auto mb-2">
+    <div ref={messagesCtrRef}  className="h-96 overflow-y-auto p-4 space-y-4">
       {localMessages.map((message, index) => (
-        <div key={index} className={`chat ${message.sender_id === currentUser.id ? 'chat-end' : 'chat-start'}`}>
+        <div key={index} className={`flex ${message.sender_id === currentUser.id ? 'justify-end' : 'justify-start'} gap-3`}>
         {message.sender_id !== currentUser.id && <UserAvatar user={message.sender} />}  
-          <div className={"chat-bubble  max-w-[70%] p-3 rounded-lg " + (message.sender_id === currentUser.id ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white" : "bg-gray-100 text-gray-800")}>{message.message}
-
+          <div className={`max-w-[70%] p-3 rounded-lg relative ${message.sender_id === currentUser.id 
+                ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white after:content-[''] after:absolute after:border-8 after:border-pink-600 after:border-t-transparent after:border-r-transparent after:right-0 after:top-[50%] after:translate-x-[100%] after:-translate-y-[50%]" 
+                : "bg-gray-100 text-gray-800 after:content-[''] after:absolute after:border-8 after:border-gray-100 after:border-t-transparent after:border-l-transparent after:left-0 after:top-[50%] after:-translate-x-[100%] after:-translate-y-[50%]"}`}>
+                  <p>{message.message}</p>
           <MessageAttachments
                   attachments={message.attachments}
                   attachmentClick={onAttachmentClick}/>
+                  <span className="text-xs mt-1 block opacity-70">{formatMessageDateShort(message.created_at)}</span>
           </div>
-          <div className="chat-footer opacity-50">Delivered</div>
           {message.sender_id === currentUser.id && <UserAvatar user={message.sender} />} 
         </div>
       ))}

@@ -9,11 +9,8 @@ const UserAvatar = ({ user, online = null, altText = "User profile picture", siz
       const sizeClasses = {
         small: "w-8 h-8",
         medium: "w-12 h-12",
-        large: "w-16 h-16"
-      };
-      
-      const handleImageError = () => {
-        setImageError(true);
+        large: "w-16 h-16",
+        huge:  "w-32 h-32"
       };
       
 
@@ -52,18 +49,17 @@ const UserAvatar = ({ user, online = null, altText = "User profile picture", siz
                     ${isOnline ? "cursor-pointer" : "cursor-default"}
                   `}
                 >
-                  {!imageError  || user.avatar ? (
+                  { user.avatar ? (
                     <img
                       src={`storage/${user.avatar}`}
                       alt={altText}
                       className="w-full h-full object-cover"
-                      onError={handleImageError}
                     />
                   ) : (
                     <div
                     className={`w-full h-full ${getBgColor(
                       user.first_name
-                    )} flex items-center justify-center text-white font-semibold`}
+                    )} flex items-center justify-center text-white font-semibold `}
                   >
                     {user.first_name.substring(0,1)} {user.sur_name.substring(0,1)}
                   </div>

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import Content from "@/Components/app/content/Content";
 import Layout from "@/Layouts/Layout"; 
-
 const Home = ({ auth }) => {
     const [posts, setPosts] = useState([]);
     const page = usePage();

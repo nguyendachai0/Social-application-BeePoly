@@ -4,10 +4,8 @@ namespace App\Http\Middleware;
 
 use App\Models\Conversation;
 use App\Models\Notification;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -35,7 +33,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $user =  $request->user();
-        // Log::info($user);
+
         return [
             ...parent::share($request),
             'auth' => [

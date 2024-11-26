@@ -216,11 +216,7 @@ const CommentSection = ({ postId, comments: initialComments}) => {
           <div className={`mt-3 pl-4 space-y-3 border-l-2 border-gray-200 ${depth > 0 ? "ml-2" : ""}`}>
             {replies.map((reply) => (
               <div key={reply.id} className="flex gap-2">
-                <img
-                  src={`/storage/${reply.user.avatar}`}
-                  alt={`${reply.user.first_name} ${reply.user.sur_name}'s avatar`}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
+                <UserAvatar user={reply.user}/>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <h6 className="font-semibold text-sm text-gray-800">{reply.user.first_name} {reply.user.sur_name}</h6>
