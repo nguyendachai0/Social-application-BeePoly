@@ -33,7 +33,6 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        dd('Inside store method');
         $validator = Validator::make($request->all(), [
             'contactInfo' => [
                 'required',

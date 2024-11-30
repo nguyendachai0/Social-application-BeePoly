@@ -67,7 +67,7 @@ useEffect(() => {
                         <Post key={post.id} post={post}/>
                     ))
                 ) : (
-                    <p>No posts available</p>
+                   <></>
                 )}
                </div>
 

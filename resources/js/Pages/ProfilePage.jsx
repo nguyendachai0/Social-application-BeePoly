@@ -1,141 +1,31 @@
 import React, { useState, useRef } from 'react';
-import { usePage } from '@inertiajs/react';
+import { usePage, Link } from '@inertiajs/react';
 import UserAvatar from '@/Components/app/UserAvatar';
-import { FiEdit2, FiCamera, FiMapPin,FiUser, FiUploadCloud, FiCalendar, FiMail, FiUserPlus, FiUserMinus, FiUserCheck, FiGrid, FiBookmark, FiHeart, FiMessageCircle, FiShare2 } from "react-icons/fi";
+import { FiEdit2, FiCamera, FiMapPin,FiUser, FiUploadCloud, FiCalendar, FiMail, FiUserPlus, FiUserMinus, FiUserCheck, FiGrid } from "react-icons/fi";
 import { router } from '@inertiajs/react';
 import Layout from '@/Layouts/Layout';
 import { formatMessageDateShort } from '@/helpers';
 import {  FaCamera,  FaTimes,  FaImage, FaUsers, FaGlobe, FaLock } from "react-icons/fa";
-import { GiBee } from "react-icons/gi";
+import CreateFanPage from '@/Components/app/CreateFanPage';
 import Post from '@/Components/post/Post';
 
-const mockUser = {
-  name: "Alex Johnson",
-  avatar: "images.unsplash.com/photo-1599566150163-29194dcaad36",
-  coverImage: "",
-  bio: "Digital nomad | Photography enthusiast | Coffee lover",
-  followers: 1234,
-  following: 891,
-  posts: 342,
-  location: "San Francisco, CA",
-  website: "www.alexjohnson.com",
-  joinDate: "January 2020",
-  email: "alex@example.com",
-  phone: "+1 (555) 123-4567",
-  isFollowing: false,
-  isFriend: false,
-  friends: [
-    {
-      id: 1,
-      name: "Sarah Wilson",
-      avatar: "images.unsplash.com/photo-1494790108377-be9c29b29330",
-      mutualFriends: 15
-    },
-    {
-      id: 2,
-      name: "Michael Brown",
-      avatar: "images.unsplash.com/photo-1507003211169-0a1dd7228f2d",
-      mutualFriends: 23
-    },
-    {
-      id: 3,
-      name: "Emma Davis",
-      avatar: "images.unsplash.com/photo-1438761681033-6461ffad8d80",
-      mutualFriends: 8
-    },
-    {
-      id: 4,
-      name: "James Taylor",
-      avatar: "images.unsplash.com/photo-1500648767791-00dcc994a43e",
-      mutualFriends: 31
-    }
-  ]
-};
-
-const mockPosts = [
-  {
-    id: 1,
-    image: "images.unsplash.com/photo-1470071459604-3b5ec3a7fe05",
-    caption: "Beautiful sunset at the beach 🌅",
-    likes: 243,
-    comments: 15,
-    bookmarked: false,
-    timestamp: "2 hours ago"
-  },
-  {
-    id: 2,
-    image: "images.unsplash.com/photo-1509042239860-f550ce710b93",
-    caption: "Morning coffee is a must ☕",
-    likes: 156,
-    comments: 8,
-    bookmarked: true,
-    timestamp: "5 hours ago"
-  },
-  {
-    id: 3,
-    image: "images.unsplash.com/photo-1501854140801-50d01698950b",
-    caption: "Nature's beauty 🌿",
-    likes: 198,
-    comments: 12,
-    bookmarked: false,
-    timestamp: "1 day ago"
-  },
-  {
-    id: 4,
-    image: "images.unsplash.com/photo-1441974231531-c6227db76b6e",
-    caption: "Forest adventures 🌲",
-    likes: 321,
-    comments: 24,
-    bookmarked: false,
-    timestamp: "2 days ago"
-  },
-  {
-    id: 5,
-    image: "images.unsplash.com/photo-1523712999610-f77fbcfc3843",
-    caption: "Mountain views 🏔️",
-    likes: 176,
-    comments: 16,
-    bookmarked: true,
-    timestamp: "3 days ago"
-  },
-  {
-    id: 6,
-    image: "images.unsplash.com/photo-1475924156734-496f6cac6ec1",
-    caption: "Peaceful moments in nature 🍃",
-    likes: 267,
-    comments: 19,
-    bookmarked: false,
-    timestamp: "4 days ago"
-  }
-];
 
 
-const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriends, initialProfileFriends, posts: initialPosts, isOwner, countFollowers, countPosts, friendStatus }) => {
+
+const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriends, initialProfileFriends, posts: initialPosts, isOwner, countFollowers, countPosts, friendStatus, initialFanpages }) => {
   const [activeTab, setActiveTab] = useState("posts");
   const [isEditing, setIsEditing] = useState(false);
-  const [isFollowing, setIsFollowing] = useState(mockUser.isFollowing);
-  const [followersCount, setFollowersCount] = useState(mockUser.followers);
-  const [avatar, setAvatar] = useState(mockUser.avatar);
-  const [coverImage, setCoverImage] = useState(mockUser.coverImage);
   const friends =  usePage().props.friends;
   const profileId = initialProfile.id;
   const [showCreateFanPage, setShowCreateFanPage] = useState(false);
 
   const avatarInputRef = useRef(null);
   const coverInputRef = useRef(null);
+  
+  console.log('fan', initialFanpages)
 
   // Relavant to FanPage
-  const [fanPages, setFanPages] = useState([
-    {
-      id: 1,
-      name: "Tech Enthusiasts",
-      cover: "https://images.unsplash.com/photo-1518770660439-4636190af475",
-      avatar: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-      members: 1234,
-      description: "A community for tech lovers and innovators",
-      privacy: "public"
-    }
-  ]);
+  const [fanPages, setFanPages] = useState(initialFanpages);
 
   const [newFanPage, setNewFanPage] = useState({
     name: "",
@@ -165,148 +55,19 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
     setShowCreateFanPage(false);
   };
 
-  const CreateFanPage = ({ newFanPage, setNewFanPage, onSubmit, onClose }) => {
-    const coverInputRef = useRef(null);
-    const avatarInputRef = useRef(null);
-  
-    const handleImageChange = (e, type) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setNewFanPage({ ...newFanPage, [type]: reader.result });
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-  
-    return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg w-full max-w-2xl p-6 relative">
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-          >
-            <FaTimes className="text-xl" />
-          </button>
-  
-          <h3 className="text-2xl font-bold mb-6">Create Fan Page</h3>
-  
-          <form onSubmit={onSubmit} className="space-y-6">
-            <div className="relative">
-              <div
-                className="h-48 rounded-lg bg-gray-100 mb-4 overflow-hidden"
-                onClick={() => coverInputRef.current.click()}
-              >
-                {newFanPage.cover ? (
-                  <img
-                    src={newFanPage.cover}
-                    alt="Cover"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full">
-                    <FaImage className="text-4xl text-gray-400" />
-                  </div>
-                )}
-              </div>
-              <input
-                type="file"
-                ref={coverInputRef}
-                onChange={(e) => handleImageChange(e, "cover")}
-                accept="image/*"
-                className="hidden"
-              />
-  
-              <div className="absolute -bottom-6 left-4">
-                <div
-                  className="w-24 h-24 rounded-full bg-gray-100 border-4 border-white overflow-hidden"
-                  onClick={() => avatarInputRef.current.click()}
-                >
-                  {newFanPage.avatar ? (
-                    <img
-                      src={newFanPage.avatar}
-                      alt="Avatar"
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full">
-                      <FaCamera className="text-2xl text-gray-400" />
-                    </div>
-                  )}
-                </div>
-                <input
-                  type="file"
-                  ref={avatarInputRef}
-                  onChange={(e) => handleImageChange(e, "avatar")}
-                  accept="image/*"
-                  className="hidden"
-                />
-              </div>
-            </div>
-  
-            <div className="mt-8 space-y-4">
-              <div>
-                <input
-                  type="text"
-                  value={newFanPage.name}
-                  onChange={(e) => setNewFanPage({ ...newFanPage, name: e.target.value })}
-                  placeholder="Page Name"
-                  className="w-full p-3 border border-purple-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  required
-                />
-              </div>
-  
-              <div>
-                <textarea
-                  value={newFanPage.description}
-                  onChange={(e) => setNewFanPage({ ...newFanPage, description: e.target.value })}
-                  placeholder="Page Description"
-                  className="w-full p-3 border border-purple-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
-                  rows="3"
-                  required
-                />
-              </div>
-  
-              <div>
-                <select
-                  value={newFanPage.privacy}
-                  onChange={(e) => setNewFanPage({ ...newFanPage, privacy: e.target.value })}
-                  className="w-full p-3 border border-purple-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                >
-                  <option value="public">Public</option>
-                  <option value="private">Private</option>
-                </select>
-              </div>
-            </div>
-  
-            <div className="flex justify-end space-x-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-6 py-2 border border-purple-600 text-purple-600 rounded-full hover:bg-purple-50"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:opacity-90"
-              >
-                Create Page
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    );
-  };
-  
+
   const FanPageCard = ({ page }) => {
+
+    const handleViewPage = () => {
+      navigate(`/fanpages/${page.id}`);
+    };
+
+    
     return (
       <div className="bg-white rounded-lg shadow-md overflow-hidden border border-purple-100">
         <div className="relative h-48">
           <img
-            src={page.cover}
+            src={page.cover_image}
             alt={page.name}
             className="w-full h-full object-cover"
           />
@@ -321,12 +82,10 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
                 <h3 className="font-bold text-xl">{page.name}</h3>
                 <div className="flex items-center space-x-2 text-sm">
                   <FaUsers className="text-white/80" />
-                  <span>{page.members.toLocaleString()} members</span>
-                  {page.privacy === "public" ? (
+                  {/* <span>{page.members.toLocaleString()} members</span> */}
+                 
                     <FaGlobe className="text-white/80" />
-                  ) : (
-                    <FaLock className="text-white/80" />
-                  )}
+                
                 </div>
               </div>
             </div>
@@ -334,10 +93,12 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
         </div>
         <div className="p-4">
           <p className="text-gray-600 mb-4">{page.description}</p>
-          <button className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:opacity-90 transition-opacity flex items-center justify-center space-x-2">
-            <FaUsers />
-            <span>Join Page</span>
-          </button>
+          <Link
+        href={`/fanpages/${page.id}`}
+        className="w-full py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:opacity-90 transition-opacity flex items-center justify-center space-x-2"
+      >            <FaUsers />
+            <span>View my Page</span>
+          </Link>
         </div>
       </div>
     );
@@ -413,11 +174,6 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
     const file = event.target.files[0];
     if (file) {
       handleUpload("avatar", file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatar(reader.result);
-      };
-      reader.readAsDataURL(file);
     }
   };
   
@@ -425,11 +181,6 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
     const file = event.target.files[0];
     if (file) {
       handleUpload("banner", file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCoverImage(reader.result);
-      };
-      reader.readAsDataURL(file);
     }
   };
   
@@ -467,7 +218,7 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
           >
             {initialProfile.banner ? (
               <img
-                src={`/storage/${initialProfile.banner}`}
+                src={initialProfile.banner}
                 alt="Cover"
                 className="w-full h-full object-cover"
                 
@@ -715,7 +466,6 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
                  <CreateFanPage
                    newFanPage={newFanPage}
                    setNewFanPage={setNewFanPage}
-                   onSubmit={handleCreateFanPage}
                    onClose={() => setShowCreateFanPage(false)}
                  />
                )}

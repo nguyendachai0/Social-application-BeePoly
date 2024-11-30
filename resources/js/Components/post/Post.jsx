@@ -9,6 +9,7 @@ import CommentSection from '../app/CommentSection';
 // import CommentSection from '../app/comments/CommentSection';
 
 export default function Post({ post }) {
+  console.log('at',post)
   const user = usePage().props.auth.user;
 
   const [likes, setLikes] = useState(post.reactions?.length || 0); 
@@ -84,6 +85,7 @@ export default function Post({ post }) {
                   <button className="text-gray-500 hover:text-gray-700"><FaEllipsisH /></button>
                 </div>
                 <p className="mb-4">{post.caption}</p>
+                
                 <Attachment attachments={post.attachments} />
                 
                 <div className="flex items-center justify-between">

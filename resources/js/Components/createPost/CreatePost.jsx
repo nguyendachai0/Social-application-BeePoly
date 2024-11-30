@@ -4,8 +4,7 @@ import { toast } from 'react-toastify';
 
 import {FaImage, FaVideo, FaMapMarkerAlt, FaUserTag } from "react-icons/fa";
 
-const CreatePost = () => {
-    const [errors, setErrors] = useState({});
+const CreatePost = ({fanpageId}) => {
     const [mediaPreviews, setMediaPreviews] = useState([]);
     const   [newPost,  setNewPost] = useState({
         caption: "",
@@ -42,10 +41,15 @@ const CreatePost = () => {
         e.preventDefault();
 
         const formData = new FormData();
+        
         formData.append("caption",newPost.caption);
         newPost.attachments.forEach((file, index) => {
             formData.append(`attachments[${index}]`, file); 
         });
+
+        if (fanpageId) {
+          formData.append("fanpage_id", fanpageId); // Include fanpage_id if it exists
+        }
 
         try {
             const response = await axios.post("/posts", formData,{
@@ -53,17 +57,17 @@ const CreatePost = () => {
                     "Content-Type": "multipart/form-data",
              }
             });
+
+            toast.success("Post created successfully!");
             discardPost();
         } catch (error) {
             if (error.response && error.response.data.errors) {
                 const formattedErrors = formatErrors(error.response.data.errors); 
-                setErrors(error.response.data.errors); 
                 toast.error(formattedErrors); 
-        
                         } else {
-                            console.error("Error creating post:", error);
                             toast.error("An error occurred while creating the post.");           
-                         }          }        
+                         }         
+                         }        
       };
       const handleCaptionChange = (e) => {
         setNewPost({
@@ -81,7 +85,6 @@ const CreatePost = () => {
           value={newPost.caption}
           onChange={handleCaptionChange}
         ></textarea>
-                {errors.caption && <span className="text-red-500 text-sm">{errors.caption.join(', ')}</span>}
         <div className="flex justify-between items-center mb-4">
           <div className="flex space-x-2">
             <label className="cursor-pointer text-gray-600 hover:text-blue-500">

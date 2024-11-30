@@ -6,7 +6,6 @@ use App\Models\User;
 use App\Repositories\FriendRequests\FriendRequestRepositoryInterface;
 use App\Services\Posts\PostServiceInterface;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 
@@ -25,7 +24,9 @@ class UserController extends Controller
     public function profile($email)
     {
         $profile = User::withCount('followers')
-            ->where('email', $email)->firstOrFail();
+            ->with('fanpages')
+            ->where('email', $email)
+            ->firstOrFail();
 
         $authUserId = auth()->id();
         $profileId = $profile->id;
@@ -58,6 +59,7 @@ class UserController extends Controller
             'friendStatus' => $friendStatus,
             'posts' => $posts,
             'countPosts'  =>  count($posts),
+            'initialFanpages' => $profile->fanpages
         ]);
     }
 

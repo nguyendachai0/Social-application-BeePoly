@@ -9,7 +9,7 @@ class Post extends Model
 {
     use HasFactory;
     protected $table = 'posts';
-    protected $fillable = ['user_id', 'caption'];
+    protected $fillable = ['user_id', 'caption', 'fanpage_id'];
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -29,5 +29,10 @@ class Post extends Model
     public function attachments()
     {
         return $this->hasMany(Attachment::class, 'post_id');
+    }
+
+    public function fanpage()
+    {
+        return $this->belongsTo(Fanpage::class);
     }
 }

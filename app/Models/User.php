@@ -83,6 +83,11 @@ class User extends Authenticatable
             ->wherePivotIn('status', ['rejected', 'pending']);
     }
 
+    public function followedFanpages()
+    {
+        return $this->belongsToMany(Fanpage::class, 'fanpage_followers', 'user_id', 'fanpage_id')
+            ->withTimestamps();
+    }
 
     public function friendsOfThisUser()
     {
@@ -188,5 +193,20 @@ class User extends Authenticatable
     public function getFullNameAttribute()
     {
         return $this->first_name . ' ' . $this->sur_name;
+    }
+
+    public function getAvatarAttribute($value)
+    {
+        return $value ? asset('storage/' . $value) : null;
+    }
+
+    public function getBannerAttribute($value)
+    {
+        return $value ? ('storage/' . $value) : null;
+    }
+
+    public function fanpages()
+    {
+        return $this->hasMany(Fanpage::class);
     }
 }

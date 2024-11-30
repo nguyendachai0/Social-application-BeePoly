@@ -16,10 +16,17 @@ class PostService implements PostServiceInterface
     {
         return $this->postRepository->getUserPosts($userId);
     }
+
     public function getPostsForUser($userId)
     {
         return $this->postRepository->getPostsForUser($userId);
     }
+
+    public function getPostsForFanpage($fanpageId)
+    {
+        return $this->postRepository->getPostsForFanpage($fanpageId);
+    }
+
     public function createPost(array $data)
     {
         $post = $this->postRepository->createPost($data);

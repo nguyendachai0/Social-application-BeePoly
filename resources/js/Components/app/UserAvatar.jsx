@@ -51,7 +51,7 @@ const UserAvatar = ({ user, online = null, altText = "User profile picture", siz
                 >
                   { user.avatar ? (
                     <img
-                      src={`storage/${user.avatar}`}
+                      src={user.avatar}
                       alt={altText}
                       className="w-full h-full object-cover"
                     />

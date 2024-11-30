@@ -4,6 +4,7 @@ namespace App\Repositories\Posts;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Fanpage;
 
 class PostRepository implements PostRepositoryInterface
 {
@@ -22,6 +23,7 @@ class PostRepository implements PostRepositoryInterface
             ->latest()
             ->get();
     }
+
     public function getPostsForUser($userId)
     {
         $user = User::findOrFail($userId);
@@ -35,6 +37,18 @@ class PostRepository implements PostRepositoryInterface
             ->latest()
             ->get();
     }
+    public function getPostsForFanpage($fanpageId)
+    {
+        $fanpage = Fanpage::findOrFail($fanpageId);
+        return $fanpage->posts()
+            ->with('user')
+            ->with('attachments')
+            ->with('reactions')
+            ->with('comments')
+            ->latest()
+            ->get();
+    }
+
     public function createPost(array $data)
     {
         return $this->post->create($data);

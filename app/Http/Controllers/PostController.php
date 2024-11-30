@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Events\PostCreated;
 use Illuminate\Http\Request;
 use App\Services\Posts\PostServiceInterface;
+use App\Http\Requests\StorePostRequest;
 
 class PostController extends Controller
 {
@@ -23,17 +24,14 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
-        $request->validate([
-            'caption' =>  'nullable|string|required_without:attachments',
-            'attachments' => 'nullable|array|max:10|required_without:caption',
-            'attachments.*' => 'file|max:1024000|mimes:jpg,jpeg,png,pdf,docx,mp4,mov,avi'
-        ]);
+
         $data = [
             'user_id' => auth()->id(),
             'caption' => $request->input('caption'),
-            'attachments' => $request->file('attachments'), // Multiple files
+            'attachments' => $request->file('attachments'),
+            'fanpage_id' => $request->input('fanpage_id')
         ];
 
         $post = $this->postService->createPost($data);

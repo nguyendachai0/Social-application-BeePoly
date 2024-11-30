@@ -12,6 +12,8 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FanpageController;
+use App\Http\Controllers\FanpageFollowerController;
 use Illuminate\Support\Facades\Route;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
 use Spatie\Health\Checks\Checks\DebugModeCheck;
@@ -25,14 +27,25 @@ require __DIR__ . '/auth.php';
 
 Route::middleware(['auth',  'verified'])->group(function () {
     Route::get('/', [HomeController::class,  'home'])->name('dashboard');
+
     Route::apiResource('posts', PostController::class);
+
     Route::post('/groups', [GroupController::class, 'create']);
     Route::get('/user/{user}', [MessageController::class, 'byUser'])->name('chat.user');
     Route::get('/group/{group}', [MessageController::class, 'byGroup'])->name('chat.user');
     Route::post('/message', [MessageController::class, 'store'])->name('message.store');
     Route::delete('/message/message', [MessageController::class, 'destroy'])->name('message.destroy');
     Route::get('/message/older/{message}', [MessageController::class, 'loadOlder'])->name('message.loadOlder');
+
     Route::post('/upload-{type}', [UserController::class, 'uploadAvatarOrBanner'])->name('profile.uploadImage');
+
+    Route::post('/fanpages', [FanpageController::class, 'store'])->name('createFanpage');
+    Route::get('/fanpages/{id}', [FanPageController::class, 'show'])->name('fanpages.show');
+    Route::post('/fanpages/{fanpage}/upload-{type}', [FanpageController::class, 'uploadAvatarOrCoverImage'])->name('profile.uploadImage');
+
+    Route::post('/fanpages/{fanpage}/follow', [FanpageFollowerController::class, 'follow'])->name('fanpages.follow');
+    Route::delete('/fanpages/{fanpage}/unfollow', [FanpageFollowerController::class, 'unfollow'])->name('fanpages.unfollow');
+    Route::get('/fanpages/{fanpage}/followers', [FanpageFollowerController::class, 'getFollowers'])->name('fanpages.followers');
 
     Route::post('/send-friend-request', [FriendRequestController::class, 'sendRequest'])->name('friends.request.send');
     Route::post('/cancel-friend-request', [FriendRequestController::class, 'cancelRequest'])->name('friends.request.cancel');
@@ -44,6 +57,7 @@ Route::middleware(['auth',  'verified'])->group(function () {
     Route::delete('reaction', [ReactionController::class, 'destroy']);
     Route::get('reactions/{type}/{id}', [ReactionController::class, 'fetchReactions']);
     Route::get('reaction/check', [ReactionController::class, 'hasReacted']);
+
     Route::post('/posts/{post}/comments', [CommentController::class,  'postComment']);
     Route::get('/posts/{post}/comments', [CommentController::class, 'getCommentsForPost']);
     Route::post('/comments/{comment}/replies', [CommentController::class, 'replyToComment'])->name('comment.reply');
