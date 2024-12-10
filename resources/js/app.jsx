@@ -1,11 +1,13 @@
 import './bootstrap';
 import '../css/app.css';
-
 import { createRoot } from 'react-dom/client';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { EventBusProvider } from './EventBus';
 import { DarkModeProvider } from './Context/DarkModeContext';
+import { HealthyUsageReminderProvider } from './Components/HealthyUsageRemider';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -17,7 +19,9 @@ createInertiaApp({
         root.render(
         <EventBusProvider>
                 <DarkModeProvider>
-                <App {...props} />
+                <HealthyUsageReminderProvider>
+                    <App {...props} />
+                </HealthyUsageReminderProvider>
                 </DarkModeProvider>
         </EventBusProvider>
     );

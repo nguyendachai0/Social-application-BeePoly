@@ -1,6 +1,9 @@
 // useAuthFormState.js
 import { useState } from "react";
 import { format } from "date-fns";
+import {toast} from 'react-toastify';
+import { router } from "@inertiajs/react";
+
 
 const UseAuthFormState = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -77,34 +80,18 @@ const UseAuthFormState = () => {
       const routeName = isLogin ? '/login' : '/register'; 
 
       try {
-        const response = await fetch(routeName, {
-          method: 'POST',
-          headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        router.post(routeName, formData, {
+          onStart: () => setLoading(true),  
+          onFinish: () => setLoading(false),  
+          onError: (error) => {
+            setErrors(error);
+            toast.error(error.message || 'Something went wrong!');
           },
-          body: formData,
-        });
-
-        if (response.redirected) {
-          window.location.href = response.url;
-          return; 
-        }
-
-        if (!response.ok) {
-          try {
-            const errorData = await response.json();  
-            setErrors(errorData.errors || {});  
-          } catch (jsonError) {
-              console.error('Failed to parse JSON error response:', jsonError);
-              setErrors({ general: 'An unexpected error occurred.' });  
+          onSuccess: () => {
+            toast.success(isLogin ? 'Login successful!' : 'Registration successful!');
+            resetForm();  // Reset form on success
           }
-        setLoading(false)
-        } else {
-          const result = await response.json();
-          console.log('Success:', result);
-          setLoading(false);
-          resetForm(); 
-        }
+        });
       } catch (error) {
         console.error('Error:', error);
         setLoading(false);
@@ -112,6 +99,47 @@ const UseAuthFormState = () => {
     } else {
       setErrors(formErrors); // Set validation errors if there are any
     }
+  
+
+    //   try {
+    //     const response = await fetch(routeName, {
+    //       method: 'POST',
+    //       headers: {
+    //         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+    //       },
+    //       body: formData,
+    //     });
+
+    //     if (response.ok) {
+    //       toast.success('Login successful!');
+    //       } else {
+    //         const responseData = await response.json();
+    //           console.error('Error:', responseData);
+    //           toast.error(responseData.message || 'Login failed. Please try again.');
+    //       }
+
+    //     if (!response.ok) {
+    //       try {
+    //         const errorData = await response.json();  
+    //         setErrors(errorData.errors || {});  
+    //       } catch (jsonError) {
+    //           console.error('Failed to parse JSON error response:', jsonError);
+    //           setErrors({ general: 'An unexpected error occurred.' });  
+    //       }
+    //     setLoading(false)
+    //     } else {
+    //       const result = await response.json();
+    //       console.log('Success:', result);
+    //       setLoading(false);
+    //       resetForm(); 
+    //     }
+    //   } catch (error) {
+    //     console.error('Error:', error);
+    //     setLoading(false);
+    //   }
+    // } else {
+    //   setErrors(formErrors); // Set validation errors if there are any
+    // }
   };
 
   // Reset form state

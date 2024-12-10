@@ -1,6 +1,7 @@
 import {  useState } from "react";
 import {  usePage, router } from "@inertiajs/react";
 import UserAvatar from "./UserAvatar";
+import { toast } from "react-toastify";
 
 const CreateGroupChat = ({ setShowCreateGroupModal }) => {
 
@@ -27,6 +28,7 @@ const CreateGroupChat = ({ setShowCreateGroupModal }) => {
                   setShowCreateGroupModal(false);
                   setGroupName("");
                   setSelectedFriends([]);
+                  toast.success('🦄 Group Created successfully!');
                 },
                 onError: (errors) => {
                   console.log(errors);

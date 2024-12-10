@@ -3,8 +3,6 @@ const ImageUpload = () => {
     const handleImageChange = (e) => {
       const file = e.target.files[0];
       if (file) {
-        // Handle image upload logic here
-        console.log(file);
       }
     };
   

@@ -8,8 +8,7 @@ import UserAvatar from "@/Components/app/UserAvatar";
 import { router } from '@inertiajs/react';
 import CreatePost from "@/Components/createPost/CreatePost";
 import Post from "@/Components/post/Post";
-
-
+import { toast } from "react-toastify";
 
 
 const FanpageView = ({fanpage , initialPosts, isOwner, is_followed}) => {
@@ -18,7 +17,7 @@ const FanpageView = ({fanpage , initialPosts, isOwner, is_followed}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showLightbox, setShowLightbox] = useState(false);
   const [theme, setTheme] = useState("light");
-  const [selectedFile, setSelectedFile] = useState(null);
+  // const [selectedFile, setSelectedFile] = useState(null);
 
   const avatarInputRef = useRef(null);
   const coverInputRef = useRef(null);
@@ -31,10 +30,10 @@ const FanpageView = ({fanpage , initialPosts, isOwner, is_followed}) => {
   .slice(0, 4);
 
   const imagesToDisplay = attachmentImages.length > 0 ? attachmentImages : [
-    "images.unsplash.com/photo-1501281668745-f7f57925c3b4",
-    "images.unsplash.com/photo-1653155864141-57b96ee8216f",
-    "images.unsplash.com/photo-1611162616305-c69b3fa7fbe0",
-    "images.unsplash.com/photo-1611162616475-46b635cb6868"
+    "https://images.unsplash.com/photo-1501281668745-f7f57925c3b4",
+    "https://images.unsplash.com/photo-1653155864141-57b96ee8216f",
+    "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0",
+    "https://images.unsplash.com/photo-1611162616475-46b635cb6868"
   ];
 
   const toggleFollow = () => {
@@ -74,20 +73,20 @@ const FanpageView = ({fanpage , initialPosts, isOwner, is_followed}) => {
   
     router.post(url, formData, {
       forceFormData: true,
-      onSuccess: (response) => {
-        if (type === "avatar") {
-          setAvatar(response.avatarUrl); 
-        } else if (type === "cover_image") {
-          setCoverImage(response.bannerUrl); 
-        }
-        alert(`${type} uploaded successfully!`);
+      onSuccess: () => {
+        toast.success(`Uploaded ${type} successfully`, {
+          position: "top-right",
+          autoClose: 3000, 
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+      });
       },
       onError: (errors) => {
         console.error(errors);
       },
-      onProgress: (progress) => {
-        console.log(`Upload Progress: ${progress.percentage}%`);
-      },
+      preserveScroll: true,
     });
   };
 

@@ -1,7 +1,9 @@
 import React, {useRef } from 'react';
 import { router } from '@inertiajs/react';
 import {  FaCamera,  FaTimes,  FaImage} from "react-icons/fa";
-const CreateFanPage = ({ newFanPage, setNewFanPage, onSubmit, onClose }) => {
+import { toast } from 'react-toastify';
+
+const CreateFanpage = ({ newFanpage, setNewFanpage, onSubmit, onClose, setFanpages }) => {
     const coverInputRef = useRef(null);
     const avatarInputRef = useRef(null);
   
@@ -9,7 +11,7 @@ const CreateFanPage = ({ newFanPage, setNewFanPage, onSubmit, onClose }) => {
       const file = e.target.files[0];
       if (file) {
         const previewUrl = URL.createObjectURL(file);
-        setNewFanPage({ ...newFanPage, [type]: file, [`${type}Preview`]: previewUrl });
+        setNewFanpage({ ...newFanpage, [type]: file, [`${type}Preview`]: previewUrl });
       }
     };
 
@@ -17,22 +19,23 @@ const CreateFanPage = ({ newFanPage, setNewFanPage, onSubmit, onClose }) => {
         e.preventDefault();
       
         const formData = new FormData();
-        formData.append("name", newFanPage.name);
-        formData.append("description", newFanPage.description);
-        if (newFanPage.cover) {
-          formData.append("cover_image", newFanPage.cover);
+        formData.append("name", newFanpage.name);
+        formData.append("description", newFanpage.description);
+        if (newFanpage.cover) {
+          formData.append("cover_image", newFanpage.cover);
         }
-        if (newFanPage.avatar) {
-          formData.append("avatar", newFanPage.avatar);
+        if (newFanpage.avatar) {
+          formData.append("avatar", newFanpage.avatar);
         }
       
         router.post("/fanpages", formData, {
-          onSuccess: () => {
-            console.log("Fan page created successfully!");
-            onClose(); // Close the modal or handle success UI
+          onSuccess: (page) => {
+            setFanpages(page.props.initialFanpages);
+            toast.success('🦄 Fanpage Created successfully!');
+            onClose(); 
           },
           onError: (errors) => {
-            console.error(errors); // Display errors (Inertia will pass back validation errors)
+            console.error(errors); 
           },
         });
       };
@@ -55,9 +58,9 @@ const CreateFanPage = ({ newFanPage, setNewFanPage, onSubmit, onClose }) => {
                 className="h-48 rounded-lg bg-gray-100 mb-4 overflow-hidden"
                 onClick={() => coverInputRef.current.click()}
               >
-                {newFanPage.coverPreview ? (
+                {newFanpage.coverPreview ? (
                   <img
-                    src={newFanPage.coverPreview}
+                    src={newFanpage.coverPreview}
                     alt="Cover"
                     className="w-full h-full object-cover"
                   />
@@ -80,9 +83,9 @@ const CreateFanPage = ({ newFanPage, setNewFanPage, onSubmit, onClose }) => {
                   className="w-24 h-24 rounded-full bg-gray-100 border-4 border-white overflow-hidden"
                   onClick={() => avatarInputRef.current.click()}
                 >
-                  {newFanPage.avatarPreview ? (
+                  {newFanpage.avatarPreview ? (
                     <img
-                      src={newFanPage.avatarPreview}
+                      src={newFanpage.avatarPreview}
                       alt="Avatar"
                       className="w-full h-full object-cover"
                     />
@@ -106,8 +109,8 @@ const CreateFanPage = ({ newFanPage, setNewFanPage, onSubmit, onClose }) => {
               <div>
                 <input
                   type="text"
-                  value={newFanPage.name}
-                  onChange={(e) => setNewFanPage({ ...newFanPage, name: e.target.value })}
+                  value={newFanpage.name}
+                  onChange={(e) => setNewFanpage({ ...newFanpage, name: e.target.value })}
                   placeholder="Page Name"
                   className="w-full p-3 border border-purple-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                   required
@@ -116,8 +119,8 @@ const CreateFanPage = ({ newFanPage, setNewFanPage, onSubmit, onClose }) => {
   
               <div>
                 <textarea
-                  value={newFanPage.description}
-                  onChange={(e) => setNewFanPage({ ...newFanPage, description: e.target.value })}
+                  value={newFanpage.description}
+                  onChange={(e) => setNewFanpage({ ...newFanpage, description: e.target.value })}
                   placeholder="Page Description"
                   className="w-full p-3 border border-purple-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
                   rows="3"
@@ -146,4 +149,4 @@ const CreateFanPage = ({ newFanPage, setNewFanPage, onSubmit, onClose }) => {
       </div>
     );
   };
-export default CreateFanPage;
+export default CreateFanpage;

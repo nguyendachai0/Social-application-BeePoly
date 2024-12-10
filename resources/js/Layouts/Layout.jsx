@@ -3,12 +3,9 @@ import LeftBar from "@/Components/app/leftBar/LeftBar";
 import RightBar from "@/Components/app/rightBar/RightBar";
 import { usePage } from "@inertiajs/react";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
 
 const Layout = ({ children, showLeftBar = true, showRightBar = true}) => {
     const { props } = usePage();  
-    console.log('Page Props:', props); 
-
     return (
         <>
     <Navbar />

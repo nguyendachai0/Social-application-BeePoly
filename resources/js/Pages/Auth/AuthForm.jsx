@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import OverlaySection from "./OverlaySection";
 import PersonalInfoForm from "./PersonalInfoForm";
 import UseAuthFormState from "./UseAuthFormState";
+import { ToastContainer } from "react-toastify";
 
 const AuthForm = () => {
   const {
@@ -9,6 +10,8 @@ const AuthForm = () => {
   } = UseAuthFormState();
 
   return (
+    <>
+    <ToastContainer />
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden relative">
         <div className="flex flex-col md:flex-row h-full transition-all duration-1000 ease-in-out relative">
@@ -20,6 +23,8 @@ const AuthForm = () => {
         </div>
       </div>
     </div>
+    </>
+
   );
 };
 

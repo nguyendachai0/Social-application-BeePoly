@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { BsEmojiSmile, BsEmojiAngry, BsEmojiLaughing, BsEmojiHeartEyes, BsEmojiSunglasses, BsEmojiWink, BsEmojiKiss, BsStars, BsEmojiFrown } from "react-icons/bs";
 import CommentForm from "./comments/CommentForm";
 import CommentList from "./comments/CommentList";
+import { router } from '@inertiajs/react';
 
 
 
@@ -21,7 +22,7 @@ const CommentSection = ({ postId, comments: initialComments}) => {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const commentImageRef = useRef(null);
     const replyImageRef = useRef(null);
-    const [replyImage, setReplyImage] = useState(null);
+    const [replyImages, setReplyImages] = useState(null);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
 
@@ -51,7 +52,6 @@ const CommentSection = ({ postId, comments: initialComments}) => {
         setChosenFiles((prevFiles) => {
             return [...prevFiles, ...updatedFiles];
         });
-        console.log('chosen fiel', chosenFiles);
     }
 
     
@@ -69,16 +69,15 @@ const CommentSection = ({ postId, comments: initialComments}) => {
       }));
     };
 
-      const handleReplyImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setReplyImage(reader.result);
-          };
-          reader.readAsDataURL(file);
-        }
-      };
+    const handleReplyImageUpload = (e) => {
+      const files = Array.from(e.target.files);
+      const fileObjects = files.map((file) => ({
+        file,
+        url: URL.createObjectURL(file),
+      }));
+      
+      setReplyImages((prev) => [...(prev || []), ...fileObjects]);
+    };
 
     const addReply = (items, parentId, newReply) => {
         return items.map(item => {
@@ -104,33 +103,43 @@ const CommentSection = ({ postId, comments: initialComments}) => {
   
     const handleReplySubmit = async (e, commentId) => {
       e.preventDefault();
-      if (replyText.length < 5) {
-        alert("Reply must be at least 5 characters.");
-        return;
-      }
       setIsSubmitting(true);
-  
+    
+      const formData = new FormData();
+      formData.append("reply", replyText);
+      formData.append("comment_id", commentId);
+    
+      if (replyImages) {
+        replyImages.forEach((fileObj) => {
+          formData.append("attachments[]", fileObj.file);
+        });
+      }
+    
       try {
         const response = await fetch(`/comments/${commentId}/replies`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
             'X-CSRF-TOKEN': csrfToken,
           },
-          body: JSON.stringify({ reply: replyText }),
+          body: formData,
         });
-  
+    
         if (response.ok) {
           const newReply = await response.json();
-          setComments((prevComments) =>
-            prevComments.map((comment) =>
-              comment.id === replyingTo
+          // Assuming the response contains the newly created reply
+          setComments((prevComments) => {
+            // Update the relevant comment with the new reply
+            return prevComments.map((comment) =>
+              comment.id === commentId
                 ? { ...comment, replies: [...comment.replies, newReply] }
                 : comment
-            )
-          );
-          setReplyText("");  
-          setReplyingTo(null); 
+            );
+          });
+    
+          // Reset form states
+          setReplyText("");
+          setReplyingTo(null);
+          setReplyImages(null);
         } else {
           console.error("Failed to submit reply");
         }
@@ -143,10 +152,7 @@ const CommentSection = ({ postId, comments: initialComments}) => {
     
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
-        if (comment.length < 5) {
-          setError("Comment must be at least 5 characters");
-          return;
-        }
+        
 
         setError("");
         setIsSubmitting(true);
@@ -174,6 +180,7 @@ const CommentSection = ({ postId, comments: initialComments}) => {
             setComment(""); 
             setCommentImages([]); 
             setAttachment(null); 
+            setChosenFiles([]);
           } else {
             console.error("Failed to submit comment");
           }
@@ -202,7 +209,6 @@ const CommentSection = ({ postId, comments: initialComments}) => {
     };
 
     const toggleReplies = (commentId) => {
-        console.log('h')
         setShowReplies(prev => ({
           ...prev,
           [commentId]: !prev[commentId]
@@ -214,7 +220,9 @@ const CommentSection = ({ postId, comments: initialComments}) => {
     
         return (
           <div className={`mt-3 pl-4 space-y-3 border-l-2 border-gray-200 ${depth > 0 ? "ml-2" : ""}`}>
-            {replies.map((reply) => (
+            {replies.map((reply) => 
+            {
+              return(
               <div key={reply.id} className="flex gap-2">
                 <UserAvatar user={reply.user}/>
                 <div className="flex-1">
@@ -223,15 +231,18 @@ const CommentSection = ({ postId, comments: initialComments}) => {
                     <span className="text-xs text-gray-500">{reply.timestamp}</span>
                   </div>
                   <p className="text-sm text-gray-700">{reply.comment}</p>
-                  {reply.attachments && (
-                <div className="mt-2">
-                  <img
-                    src={reply.image.startsWith("data") ? reply.image : `https://${reply.image}`}
-                    alt="Reply attachment"
-                    className="max-w-[200px] rounded-lg"
-                  />
-                </div>
-              )}
+                  {reply.attachments && reply.attachments.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {reply.attachments.map((attachment, index) => (
+                      <img
+                        key={index}
+                        src={attachment.path}
+                        alt={`Reply attachment ${index + 1}`}
+                        className="max-w-[200px] rounded-lg"
+                      />
+                    ))}
+                  </div>
+                )}
                   
                   <div className="flex items-center gap-4 mt-2">
                     <button
@@ -262,21 +273,21 @@ const CommentSection = ({ postId, comments: initialComments}) => {
                             className="w-full px-2 py-1 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none text-sm"
                             rows="2"
                           />
-                          {replyImage && (
-                        <div className="mt-2 relative inline-block">
-                          <img
-                            src={replyImage}
-                            alt="Reply preview"
-                            className="max-w-[200px] rounded-lg"
-                          />
-                          <button
-                            onClick={() => setReplyImage(null)}
-                            className="absolute top-1 right-1 bg-gray-800 text-white p-1 rounded-full opacity-75 hover:opacity-100"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      )}
+                        {replyImages && replyImages.map((fileObj, index) => (
+                          <div key={index} className="mt-2 relative inline-block">
+                            <img
+                              src={fileObj.url}
+                              alt="Reply preview"
+                              className="max-w-[200px] rounded-lg"
+                            />
+                            <button
+                              onClick={() => setReplyImages((prev) => prev.filter((_, i) => i !== index))}
+                              className="absolute top-1 right-1 bg-gray-800 text-white p-1 rounded-full opacity-75 hover:opacity-100"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
                           <div className="flex gap-2 mt-1">
                             <button
                               onClick={(e) => handleReplySubmit(e,reply.id)}
@@ -313,7 +324,7 @@ const CommentSection = ({ postId, comments: initialComments}) => {
                   {renderReplies(reply.replies, depth + 1)}
                 </div>
               </div>
-            ))}
+            )})}
           </div>
         );
       };
@@ -350,8 +361,8 @@ const CommentSection = ({ postId, comments: initialComments}) => {
   setReplyingTo={setReplyingTo}
   commentImageRef={commentImageRef}
   replyImageRef={replyImageRef}
-  replyImage={replyImage}
-  setReplyImage={setReplyImage}
+  replyImages={replyImages}
+  setReplyImages={setReplyImages}
 />      </div>
     );
   };

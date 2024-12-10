@@ -6,8 +6,9 @@ import { router } from '@inertiajs/react';
 import Layout from '@/Layouts/Layout';
 import { formatMessageDateShort } from '@/helpers';
 import {  FaCamera,  FaTimes,  FaImage, FaUsers, FaGlobe, FaLock } from "react-icons/fa";
-import CreateFanPage from '@/Components/app/CreateFanPage';
+import CreateFanpage from '@/Components/app/CreateFanpage';
 import Post from '@/Components/post/Post';
+import { toast } from 'react-toastify';
 
 
 
@@ -17,17 +18,16 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
   const [isEditing, setIsEditing] = useState(false);
   const friends =  usePage().props.friends;
   const profileId = initialProfile.id;
-  const [showCreateFanPage, setShowCreateFanPage] = useState(false);
+  const [showCreateFanpage, setShowCreateFanpage] = useState(false);
 
   const avatarInputRef = useRef(null);
   const coverInputRef = useRef(null);
+  const [countFriends, setCountFriends] = useState(initialCountFriends);
   
-  console.log('fan', initialFanpages)
 
-  // Relavant to FanPage
-  const [fanPages, setFanPages] = useState(initialFanpages);
+  const [fanPages, setFanpages] = useState(initialFanpages);
 
-  const [newFanPage, setNewFanPage] = useState({
+  const [newFanpage, setNewFanpage] = useState({
     name: "",
     description: "",
     privacy: "public",
@@ -35,28 +35,28 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
     avatar: null
   });
 
-  const handleCreateFanPage = (e) => {
+  const handleCreateFanpage = (e) => {
     e.preventDefault();
     const newPage = {
       id: fanPages.length + 1,
-      ...newFanPage,
+      ...newFanpage,
       members: 1,
-      cover: newFanPage.cover || "https://images.unsplash.com/photo-1557683316-973673baf926",
-      avatar: newFanPage.avatar || "https://images.unsplash.com/photo-1519389950473-47ba0277781c"
+      cover: newFanpage.cover || "https://images.unsplash.com/photo-1557683316-973673baf926",
+      avatar: newFanpage.avatar || "https://images.unsplash.com/photo-1519389950473-47ba0277781c"
     };
-    setFanPages([...fanPages, newPage]);
-    setNewFanPage({
+    setFanpages([...fanPages, newPage]);
+    setNewFanpage({
       name: "",
       description: "",
       privacy: "public",
       cover: null,
       avatar: null
     });
-    setShowCreateFanPage(false);
+    setShowCreateFanpage(false);
   };
 
 
-  const FanPageCard = ({ page }) => {
+  const FanpageCard = ({ page }) => {
 
     const handleViewPage = () => {
       navigate(`/fanpages/${page.id}`);
@@ -109,55 +109,97 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
   const sendFriendRequest = (recipientId) => {
     router.post("/send-friend-request", { recipientId }, {
       onSuccess: (page) => {
-        alert(page.props.flash?.message || "Friend request sent successfully.");
+        toast.success("Friend request was sent successfully!", {
+          position: "top-right",
+          autoClose: 3000, 
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+      });
       },
       onError: (errors) => {
         console.error(errors.message || "An error occurred.");
       },
+      preserveScroll: true,
     });
   };
   
   const cancelFriendRequest = (recipientId) => {
     router.post("/cancel-friend-request", { recipientId }, {
       onSuccess: (page) => {
-        alert(page.props.flash?.message || "Friend request canceled successfully.");
+        toast.success("Friend request canceled successfully!", {
+          position: "top-right",
+          autoClose: 3000, 
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+      });
       },
       onError: (errors) => {
         console.error(errors.message || "An error occurred.");
       },
+      preserveScroll: true,
     });
   };
   
   const acceptFriendRequest = (senderId) => {
     router.post("/accept-friend-request", { senderId }, {
       onSuccess: (page) => {
-        alert(page.props.flash?.message || "Friend request accepted successfully.");
+        toast.success("Friend request accepted successfully!", {
+          position: "top-right",
+          autoClose: 3000, 
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+      });
+      setCountFriends(page.props.initialCountFriends);
+
       },
       onError: (errors) => {
         console.error(errors.message || "An error occurred.");
       },
+      preserveScroll: true,
     });
   };
   
   const declineFriendRequest = (senderId) => {
     router.post("/decline-friend-request", { senderId }, {
       onSuccess: (page) => {
-        alert(page.props.flash?.message || "Friend request declined successfully.");
+        toast.success("Friend request declined successfully!", {
+          position: "top-right",
+          autoClose: 3000, 
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+      });
       },
       onError: (errors) => {
         console.error(errors.message || "An error occurred.");
       },
+      preserveScroll: true,
     });
   };
   
   const removeFriend = (friendId) => {
     router.post("/remove-friend", { friendId }, {
       onSuccess: (page) => {
-        alert(page.props.flash?.message || "Friend removed successfully.");
+        toast.success("Friend request removed successfully!", {
+          position: "top-right",
+          autoClose: 3000, 
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+      });
       },
       onError: (errors) => {
         console.error(errors.message || "An error occurred.");
       },
+      preserveScroll: true,
     });
   };
 
@@ -191,12 +233,15 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
     router.post(`/upload-${type}`, formData, {
       forceFormData: true,
       onSuccess: (response) => {
-        if (type === "avatar") {
-          setAvatar(response.avatarUrl); 
-        } else if (type === "banner") {
-          setCoverImage(response.bannerUrl); 
-        }
-        alert(`${type} uploaded successfully!`);
+        toast.success(`Uploaded ${type} successfully`, {
+          position: "top-right",
+          autoClose: 3000, 
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+      });
+  
       },
       onError: (errors) => {
         console.error(errors);
@@ -204,6 +249,7 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
       onProgress: (progress) => {
         console.log(`Upload Progress: ${progress.percentage}%`);
       },
+      preserveScroll: true,
     });
   };
   
@@ -408,7 +454,7 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
                   onClick={() => setActiveTab("my_fanpages")}
                   className={`flex-1 py-4 text-center font-medium ${activeTab === "my_fanpages" ? "text-blue-600 border-b-2 border-blue-600" : "text-gray-600 hover:text-blue-600"}`}
                 >
-                  My Fanpages
+                 Fanpages
                 </button>
               </div>
             </div>
@@ -454,7 +500,7 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
                <div className="flex justify-between items-center mb-6">
                  <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Your Fanpages</h2>
                  <button
-                   onClick={() => setShowCreateFanPage(true)}
+                   onClick={() => setShowCreateFanpage(true)}
                    className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full font-medium hover:opacity-90 transition-opacity flex items-center space-x-2"
                  >
                    <FaUsers className="text-xl" />
@@ -462,17 +508,18 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
                  </button>
                </div>
      
-               {showCreateFanPage && (
-                 <CreateFanPage
-                   newFanPage={newFanPage}
-                   setNewFanPage={setNewFanPage}
-                   onClose={() => setShowCreateFanPage(false)}
+               {showCreateFanpage && (
+                 <CreateFanpage
+                   newFanpage={newFanpage}
+                   setNewFanpage={setNewFanpage}
+                   onClose={() => setShowCreateFanpage(false)}
+                   setFanpages={setFanpages}
                  />
                )}
      
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                  {fanPages.map((page) => (
-                   <FanPageCard key={page.id} page={page} />
+                   <FanpageCard key={page.id} page={page} />
                  ))}
                </div>
              </div>

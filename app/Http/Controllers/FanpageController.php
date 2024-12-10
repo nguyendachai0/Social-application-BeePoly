@@ -58,11 +58,7 @@ class FanpageController extends Controller
             'avatar' => $avatarPath,
         ]);
 
-        return response()->json([
-
-            'message' => 'Fanpage created successfully!',
-            'fanpage' => $fanpage,
-        ], 201);
+        return back();
     }
 
     public function uploadAvatarOrCoverImage(Request $request, $fanpageId, $type)

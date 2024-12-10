@@ -28,7 +28,7 @@ const GroupAvatar = ({group,   size = "medium"})  => {
             {
                 group.avatar  ?  (      
         <img
-          src={`https://${group.avatar}`}
+          src={`${group.avatar}`}
           alt={group.name}
           className="w-12 h-12 rounded-full absolute top-0 left-0"
         />
@@ -50,7 +50,7 @@ const GroupAvatar = ({group,   size = "medium"})  => {
         <div key={user.id}>
             {user.avatar ? (
             <img
-              src={`https://${user.avatar}`}
+              src={`${user.avatar}`}
               alt={user.name}
               className="w-6 h-6 rounded-full border-2 border-white"
             />

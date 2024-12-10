@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {  FaPlus } from "react-icons/fa";
 import { useEffect } from "react";
-import 'react-toastify/dist/ReactToastify.css';
 import Post from "@/Components/post/Post";
 import CreatePost from "@/Components/createPost/CreatePost";
 

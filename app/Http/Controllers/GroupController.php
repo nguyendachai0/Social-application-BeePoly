@@ -34,9 +34,6 @@ class GroupController extends Controller
 
         $group->users()->attach($user->id);
 
-        return response()->json([
-            'message' => 'Group created successfully!',
-            'group' => $group,
-        ], 201);
+        return back();
     }
 }

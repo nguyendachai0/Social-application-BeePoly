@@ -23,7 +23,7 @@ class CommentController extends Controller
             ->with([
                 'user',
                 'replies.user',
-                'replies.replies.user',
+                'replies.attachments',
                 'attachments'
             ])
             ->get();
@@ -100,25 +100,64 @@ class CommentController extends Controller
 
     public function replyToComment(Request $request, $commentId)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'reply' => 'required|min:1',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $parentComment = Comment::findOrFail($commentId);
 
-        $reply = $parentComment->replies()->create([
-            'comment' => $request->input('reply'),
-            'user_id' => auth()->id(),
-            'post_id' => $parentComment->post_id,
-            'parent_comment_id' => $parentComment->id,
-        ]);
+        $attachments = [];
 
-        return response()->json($reply->load('user'));
+        DB::beginTransaction();
+
+        try {
+            // Create the reply
+            $reply = $parentComment->replies()->create([
+                'comment' => $validatedData['reply'],
+                'user_id' => auth()->id(),
+                'post_id' => $parentComment->post_id,
+                'parent_comment_id' => $parentComment->id,
+            ]);
+
+            // Handle attachments if any
+            if ($request->has('attachments')) {
+                foreach ($request->file('attachments') as $file) {
+                    $directory = 'attachments/comments/' . Str::random(32);
+                    Storage::makeDirectory($directory);
+
+                    $path = $file->store($directory, 'public');
+
+                    $attachment = Attachment::create([
+                        'comment_id' => $reply->id,
+                        'name' => $file->getClientOriginalName(),
+                        'mime' => $file->getClientMimeType(),
+                        'size' => $file->getSize(),
+                        'path' => $path,
+                    ]);
+
+                    $attachments[] = $attachment;
+                }
+
+                // Attach attachments to the reply object
+                $reply->attachments = $attachments;
+            }
+
+            DB::commit();
+            return response()->json($reply->load(['user', 'attachments']), 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Error replying to comment: ' . $e->getMessage());
+
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
     }
 
     public function loadRepliesRecursively($comment)
     {
-        $comment->load(['replies.user', 'replies.replies.user']);
+        $comment->load(['replies.user', 'replies.attachments', 'replies.replies.user']);
 
         foreach ($comment->replies as $reply) {
             $this->loadRepliesRecursively($reply);

@@ -9,10 +9,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules;
+use Inertia\Inertia;
 
 class AuthenticateSessionController extends Controller
 {
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(LoginRequest $request)
     {
         $validator = Validator::make($request->all(), [
             'contactInfo' => [
@@ -27,8 +28,9 @@ class AuthenticateSessionController extends Controller
         ]);
 
         if ($validator->fails()) {
-            // Log::info('Validation errors:', $validator->errors()->all());
-            return redirect()->back()->withErrors($validator)->withInput();
+            return Inertia::render('Auth/AuthForm', [
+                'errors' => $validator->errors(),
+            ]);
         }
 
         $contactInfo = $request->input('contactInfo');
@@ -39,13 +41,12 @@ class AuthenticateSessionController extends Controller
             : ['phone' => $contactInfo, 'password' => $request->password];
 
         if (Auth::attempt($credentials)) {
-            // If authentication is successful, regenerate the session and redirect
             $request->session()->regenerate();
             return redirect()->intended(route('dashboard', absolute: false));
+        } else {
+            return Inertia::render('Auth/AuthForm', [
+                'errors' => ['message' => 'The provided credentials are incorrect.'],
+            ]);
         }
-
-        $request->session()->regenerate();
-
-        return redirect()->intended(route('dashboard', absolute: false));
     }
 }

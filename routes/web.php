@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FanpageController;
+use App\Http\Controllers\FriendController;
 use App\Http\Controllers\FanpageFollowerController;
 use Illuminate\Support\Facades\Route;
 use Spatie\Health\Checks\Checks\DatabaseCheck;
@@ -36,7 +37,7 @@ Route::middleware(['auth',  'verified'])->group(function () {
     Route::post('/message', [MessageController::class, 'store'])->name('message.store');
     Route::delete('/message/message', [MessageController::class, 'destroy'])->name('message.destroy');
     Route::get('/message/older/{message}', [MessageController::class, 'loadOlder'])->name('message.loadOlder');
-
+    Route::get('/friends', [FriendRequestController::class, 'showFriendsPage'])->name('friends.page');
     Route::post('/upload-{type}', [UserController::class, 'uploadAvatarOrBanner'])->name('profile.uploadImage');
 
     Route::post('/fanpages', [FanpageController::class, 'store'])->name('createFanpage');

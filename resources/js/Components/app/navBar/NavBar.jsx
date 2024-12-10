@@ -431,13 +431,15 @@ import CreateGroupChat from "../CreateGroupChat";
               {showProfileMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl overflow-hidden z-50 border border-purple-200">
                   <div className="p-4 border-b border-purple-100">
-                    <div className="flex items-center space-x-3">
+                  <Link 
+                    href={`${user.email}`} 
+                    className="flex items-center space-x-3 no-underline"
+  >
                      <UserAvatar user={user} size="small" />
                       <div>
-                        <h3 className="font-semibold text-gray-800">John Doe</h3>
-                        <p className="text-sm text-gray-500">john@example.com</p>
+                        <h3 className="font-semibold text-gray-800">{user.first_name} {user.sur_name}</h3>
                       </div>
-                    </div>
+                    </Link>
                   </div>
                   <div className="py-2">
                     <button
