@@ -1,7 +1,10 @@
 import { FaHeart, FaReply, FaFlag } from "react-icons/fa";
 import ReplyForm from "./ReplyForm";
+import useReport from "@/utils/hooks/useReport";
 
 const Comment = ({ comment, toggleReplies, showReplies }) => {
+
+  const {handleReport} =  useReport();
   return (
     <div className="flex gap-3 p-3 bg-gray-50 rounded-lg">
       <div className="flex-1">
@@ -23,7 +26,9 @@ const Comment = ({ comment, toggleReplies, showReplies }) => {
             <FaReply />
             <span>Reply</span>
           </button>
-          <button className="flex items-center gap-1 text-sm text-gray-500 hover:text-yellow-500 transition-colors">
+          <button
+           onClick={() => handleReport(comment.id, "comment")}
+           className="flex items-center gap-1 text-sm text-gray-500 hover:text-yellow-500 transition-colors">
             <FaFlag />
             <span>Report</span>
           </button>

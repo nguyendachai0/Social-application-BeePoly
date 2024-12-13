@@ -5,7 +5,7 @@ import { MdEscalator } from "react-icons/md";
 import { toast, ToastContainer } from "react-toastify";
 import AdminLayout from "@/Layouts/AdminLayout";
 
-const AdminContentManagement = () => {
+const AdminReportManagement = ({reports}) => {
   const [darkMode, setDarkMode] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [showSettings, setShowSettings] = useState(false);
@@ -65,7 +65,7 @@ const AdminContentManagement = () => {
 
   const ContentList = () => (
     <div className="space-y-4">
-      {dummyContent.map((item) => (
+      {reports.map((item) => (
         <div key={item.id} className={`p-4 rounded-lg shadow-md ${darkMode ? "bg-gray-800" : "bg-white"}`}>
           <div className="flex justify-between items-start">
             <div className="flex-1">
@@ -186,8 +186,8 @@ const AdminContentManagement = () => {
   );
 };
 
-AdminContentManagement.layout = (page) => (
+AdminReportManagement.layout = (page) => (
   <AdminLayout>{page}</AdminLayout>
 );
 
-export default AdminContentManagement;
+export default AdminReportManagement;

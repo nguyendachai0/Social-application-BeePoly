@@ -3,8 +3,9 @@ import { useState, useRef } from "react";
 import UserAvatar from "../UserAvatar";
 import { usePage } from "@inertiajs/react";
 import Attachment from "@/Components/attachments/Attachment";
+import useReport from "@/utils/hooks/useReport";
 
-const CommentList = ({ comments, toggleReplies, handleReply, handleReplyImageUpload, renderReplies, handleReplySubmit, showReplies, replyingTo, setReplyingTo, replyText, setReplyText, replyImageRef, replyImage, setReplyImage }) => {
+const CommentList = ({handleReport, comments, toggleReplies, handleReply, handleReplyImageUpload, renderReplies, handleReplySubmit, showReplies, replyingTo, setReplyingTo, replyText, setReplyText, replyImageRef, replyImages, setReplyImages }) => {
     const user = usePage().props.auth.user;
 
   return (
@@ -42,6 +43,7 @@ const CommentList = ({ comments, toggleReplies, handleReply, handleReplyImageUpl
               <span>Reply</span>
             </button>
             <button
+            onClick={() => handleReport(comment.id, "comment")}
               className="flex items-center gap-1 text-sm text-gray-500 hover:text-yellow-500 transition-colors"
               aria-label="Report comment"
             >
@@ -72,21 +74,23 @@ const CommentList = ({ comments, toggleReplies, handleReply, handleReplyImageUpl
                     className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none text-sm"
                     rows="2"
                   />
-                   {replyImage && (
-                    <div className="mt-2 relative inline-block">
+                   {replyImages.map((image, index) => (
+                    <div key={index} className="mt-2 relative inline-block">
                       <img
-                        src={replyImage}
-                        alt="Reply preview"
+                        src={image.url}
+                        alt={`Comment preview ${index}`}
                         className="max-w-[200px] rounded-lg"
                       />
                       <button
-                        onClick={() => setReplyImage(null)}
+                        onClick={() => {
+                          setChosenFiles(replyImages.filter((_, i) => i !== index));
+                        }}
                         className="absolute top-1 right-1 bg-gray-800 text-white p-1 rounded-full opacity-75 hover:opacity-100"
                       >
                         ×
                       </button>
                     </div>
-                  )}
+                  ))}
                   <div className="flex gap-2 mt-2">
                     <button
                       onClick={(e) => handleReplySubmit(e, comment.id)}
@@ -111,6 +115,7 @@ const CommentList = ({ comments, toggleReplies, handleReply, handleReplyImageUpl
                       type="file"
                       ref={replyImageRef}
                       onChange={handleReplyImageUpload}
+                      multiple
                       accept="image/*"
                       className="hidden"
                     />

@@ -1,78 +1,45 @@
 import { format, parseISO } from 'date-fns'; 
 import UserAvatar from "../app/UserAvatar";
-import {  FaHeart, FaComment, FaShare, FaEllipsisH} from "react-icons/fa";
+import {  FaHeart, FaComment, FaShare, FaFlag} from "react-icons/fa";
 import { useDarkMode } from "@/Context/DarkModeContext";
 import Attachment from "../attachments/Attachment";
-import { useState } from "react";
 import { usePage } from '@inertiajs/react';
 import CommentSection from '../app/CommentSection';
-// import CommentSection from '../app/comments/CommentSection';
+import ReportModal from '../app/ReportModal';
+import useLikes from "@/utils/hooks/useLikes";
+import useReport from '@/utils/hooks/useReport';
+import useComments from "@/utils/hooks/useComments";
 
 export default function Post({ post }) {
-  console.log('at',post)
-  const user = usePage().props.auth.user;
-
-  const [likes, setLikes] = useState(post.reactions?.length || 0); 
-  const [isLiked, setIsLiked] = useState(
-    post.reactions?.some(reaction => reaction.user_id === user.id) || false
-  ); 
-  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
   const {darkMode} = useDarkMode();
 
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+ 
+  const { likes, isLiked, toggleLike } = useLikes(
+    post.reactions?.length || 0,
+    post.reactions?.some(reaction => reaction.user_id === usePage().props.auth.user.id) || false,
+    post.id,
+    csrfToken
+  );
+
+  const { commentSections, toggleCommentSection } = useComments();
+
+
   const formattedDate = format(parseISO(post.created_at), 'MMMM dd, yyyy');
 
-  const [commentSections, setCommentSections] = useState({});
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const [currentPostId, setCurrentPostId] = useState(null);
+  const {
+    reportTarget,
+    reportType,
+    setReportType,
+    reportDetails,
+    setReportDetails,
+    showReportModal,
+    setShowReportModal,
+    submitReport,
+    handleReport,
+  } = useReport();
 
-
-  const handleLikeClick = async () => {
-    const postID  = post.id;
-    setIsLiked(!isLiked);
-    try {
-      const response = await fetch(`/reaction`, {
-        method: isLiked ? "DELETE" : "POST", 
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': csrfToken,
-        },
-        body: JSON.stringify({ postID }),
-      });
-  
-      if (response.ok) {
-        const updatedPost = await response.json();
-        setLikes(updatedPost.likeCount); 
-      } else {
-        console.error("Failed to update like status");
-      }
-    } catch (error) {
-      console.error("Error updating like status:", error);
-    }
-  };
-
-  
-
-  const toggleCommentSection = async (postId) => {
-    if(!commentSections[postId]) {
-      const response = await fetch(`/posts/${postId}/comments`);
-      const commentsData = await response.json();
-    setCommentSections((prevState) => ({
-      ...prevState,
-      [postId]: commentsData,
-    }));
-  } else {
-    setCommentSections((prevState) => ({
-      ...prevState,
-      [postId]: null,
-    }));
-  };
-  }
-  const toggleEmojiPicker = (postId) => {
-    setShowEmojiPicker(!showEmojiPicker);
-    setCurrentPostId(postId);
-  };
-  
   return (
    
             <div key={post.id} className={`mb-8 ${darkMode ? "bg-gray-800" : "bg-white"} rounded-lg shadow-md transform transition`}>
@@ -82,7 +49,13 @@ export default function Post({ post }) {
                    <UserAvatar user={post.user}/>
                     <span className="font-semibold">{post.user.first_name} {post.user.sur_name}</span>
                   </div>
-                  <button className="text-gray-500 hover:text-gray-700"><FaEllipsisH /></button>
+                  <button 
+                    onClick={() => handleReport(post.id, "post")}
+                    className="text-gray-500 hover:text-red-500 transition-colors duration-200"
+                    aria-label="Report post"
+                  >
+                    <FaFlag />
+                  </button>
                 </div>
                 <p className="mb-4">{post.caption}</p>
                 
@@ -92,7 +65,7 @@ export default function Post({ post }) {
                   <div className="flex space-x-4">
 
                     <button 
-                    onClick={handleLikeClick} 
+                    onClick={toggleLike} 
                     className={`flex items-center space-x-1 transition duration-300 ${
                       isLiked ? 'text-red-500 hover:text-red-600' : 'text-gray-500 hover:text-gray-600'
                     }`}>
@@ -117,9 +90,19 @@ export default function Post({ post }) {
                 </div>
 
                 {commentSections[post.id] && (
-                  <CommentSection postId={post.id} comments={commentSections[post.id]} />
+                  <CommentSection handleReport={handleReport} postId={post.id} comments={commentSections[post.id]} />
                 )}
               </div>
+              {showReportModal && <ReportModal 
+              reportTarget={reportTarget}
+              reportType={reportType}
+              setReportType={setReportType} 
+              reportDetails={reportDetails} 
+              submitReport={submitReport}
+              setReportDetails={setReportDetails}
+              setShowReportModal={setShowReportModal}
+              />}
             </div>
+            
   );
 }

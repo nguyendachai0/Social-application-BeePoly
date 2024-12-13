@@ -8,7 +8,7 @@ import { router } from '@inertiajs/react';
 
 
 
-const CommentSection = ({ postId, comments: initialComments}) => {
+const CommentSection = ({ handleReport, postId, comments: initialComments}) => {
     const [comment, setComment] = useState("");
     const [chosenFiles, setChosenFiles] = useState([]);
     const [comments, setComments] = useState(initialComments || []);
@@ -22,7 +22,7 @@ const CommentSection = ({ postId, comments: initialComments}) => {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     const commentImageRef = useRef(null);
     const replyImageRef = useRef(null);
-    const [replyImages, setReplyImages] = useState(null);
+    const [replyImages, setReplyImages] = useState([]);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
 
@@ -69,15 +69,19 @@ const CommentSection = ({ postId, comments: initialComments}) => {
       }));
     };
 
-    const handleReplyImageUpload = (e) => {
-      const files = Array.from(e.target.files);
-      const fileObjects = files.map((file) => ({
-        file,
-        url: URL.createObjectURL(file),
-      }));
-      
-      setReplyImages((prev) => [...(prev || []), ...fileObjects]);
-    };
+      const handleReplyImageUpload = (e) => {
+        const files = e.target.files;
+        const updatedFiles = [...files].map((file) => {
+          return {
+              file: file,
+              url: URL.createObjectURL(file),
+          }
+      });
+      e.target.value = null;
+      setReplyImages((prevFiles) => {
+          return [...prevFiles, ...updatedFiles];
+      });
+      };
 
     const addReply = (items, parentId, newReply) => {
         return items.map(item => {
@@ -104,42 +108,35 @@ const CommentSection = ({ postId, comments: initialComments}) => {
     const handleReplySubmit = async (e, commentId) => {
       e.preventDefault();
       setIsSubmitting(true);
-    
-      const formData = new FormData();
-      formData.append("reply", replyText);
-      formData.append("comment_id", commentId);
-    
-      if (replyImages) {
-        replyImages.forEach((fileObj) => {
-          formData.append("attachments[]", fileObj.file);
-        });
-      }
-    
+  
       try {
+        const formData = new FormData();
+        formData.append("reply", replyText);
+
+        replyImages.forEach((fileObj) => {
+    formData.append("attachments[]", fileObj.file);
+  });
+
         const response = await fetch(`/comments/${commentId}/replies`, {
           method: 'POST',
           headers: {
             'X-CSRF-TOKEN': csrfToken,
           },
-          body: formData,
+          body: formData
         });
-    
+  
         if (response.ok) {
           const newReply = await response.json();
-          // Assuming the response contains the newly created reply
-          setComments((prevComments) => {
-            // Update the relevant comment with the new reply
-            return prevComments.map((comment) =>
-              comment.id === commentId
-                ? { ...comment, replies: [...comment.replies, newReply] }
+          setComments((prevComments) =>
+            prevComments.map((comment) =>
+              comment.id === replyingTo
+                ? { ...comment, replies: [...comment.replies || [], newReply] }
                 : comment
-            );
-          });
-    
-          // Reset form states
-          setReplyText("");
-          setReplyingTo(null);
-          setReplyImages(null);
+            )
+          );
+          setReplyText("");  
+          setReplyingTo(null); 
+          setReplyImages([]);
         } else {
           console.error("Failed to submit reply");
         }
@@ -222,6 +219,7 @@ const CommentSection = ({ postId, comments: initialComments}) => {
           <div className={`mt-3 pl-4 space-y-3 border-l-2 border-gray-200 ${depth > 0 ? "ml-2" : ""}`}>
             {replies.map((reply) => 
             {
+              console.log('replyyy', reply);
               return(
               <div key={reply.id} className="flex gap-2">
                 <UserAvatar user={reply.user}/>
@@ -231,18 +229,18 @@ const CommentSection = ({ postId, comments: initialComments}) => {
                     <span className="text-xs text-gray-500">{reply.timestamp}</span>
                   </div>
                   <p className="text-sm text-gray-700">{reply.comment}</p>
-                  {reply.attachments && reply.attachments.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {reply.attachments.map((attachment, index) => (
-                      <img
-                        key={index}
-                        src={attachment.path}
-                        alt={`Reply attachment ${index + 1}`}
-                        className="max-w-[200px] rounded-lg"
-                      />
-                    ))}
-                  </div>
-                )}
+                      {reply.attachments && reply.attachments.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {reply.attachments.map((attachment, index) => (
+                          <img
+                            key={index}
+                            src={attachment.path}
+                            alt={`Reply attachment ${index + 1}`}
+                            className="max-w-[200px] rounded-lg"
+                          />
+                        ))}
+                      </div>
+                    )}
                   
                   <div className="flex items-center gap-4 mt-2">
                     <button
@@ -273,15 +271,17 @@ const CommentSection = ({ postId, comments: initialComments}) => {
                             className="w-full px-2 py-1 border rounded-lg focus:ring-2 focus:ring-blue-400 focus:border-transparent resize-none text-sm"
                             rows="2"
                           />
-                        {replyImages && replyImages.map((fileObj, index) => (
+                         {replyImages.map((image, index) => (
                           <div key={index} className="mt-2 relative inline-block">
                             <img
-                              src={fileObj.url}
-                              alt="Reply preview"
+                              src={image.url}
+                              alt={`Comment preview ${index}`}
                               className="max-w-[200px] rounded-lg"
                             />
                             <button
-                              onClick={() => setReplyImages((prev) => prev.filter((_, i) => i !== index))}
+                              onClick={() => {
+                                setChosenFiles(replyImages.filter((_, i) => i !== index));
+                              }}
                               className="absolute top-1 right-1 bg-gray-800 text-white p-1 rounded-full opacity-75 hover:opacity-100"
                             >
                               ×
@@ -312,6 +312,7 @@ const CommentSection = ({ postId, comments: initialComments}) => {
                           type="file"
                           ref={replyImageRef}
                           onChange={handleReplyImageUpload}
+                          multiple
                           accept="image/*"
                           className="hidden"
                         />
@@ -347,6 +348,7 @@ const CommentSection = ({ postId, comments: initialComments}) => {
       />
         {/* Comments List */}
         <CommentList
+        handleReport={handleReport}
   comments={comments}
   toggleReplies={toggleReplies}
   handleReply={handleReply}

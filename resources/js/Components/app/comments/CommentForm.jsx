@@ -10,34 +10,6 @@ const CommentForm = ({ comment, setComment, error, isSubmitting, handleCommentSu
     const user = usePage().props.auth.user;
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
-    const renderImages = (images, onRemove = null) => {
-        return (
-          <div className="flex flex-wrap gap-2 mt-2">
-            {images.map((image, index) => (
-              <div key={index} className="relative inline-block">
-                <img
-                  src={image.startsWith("data") ? image : `https://${image}`}
-                  alt={`Attachment ${index + 1}`}
-                  className="max-w-[200px] h-[150px] object-cover rounded-lg"
-                />
-                {onRemove && (
-                  <button
-                    onClick={() => onRemove(index)}
-                    className="absolute top-1 right-1 bg-gray-800 text-white p-1 rounded-full opacity-75 hover:opacity-100"
-                  >
-                    <FaTimes />
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        );
-      };
-
-    const removeCommentImage = (index) => {
-    setCommentImages(prev => prev.filter((_, i) => i !== index));
-    };
-
   return (
     <form onSubmit={handleCommentSubmit} className="mb-6">
     <div className="flex items-start gap-2">

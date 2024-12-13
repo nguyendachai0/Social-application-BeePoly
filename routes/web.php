@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\AdminContentManagementController;
+use App\Http\Controllers\AdminReportManagementController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminUserManagementController;
 use App\Http\Controllers\CommentController;
@@ -9,19 +9,14 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FanpageController;
-use App\Http\Controllers\FriendController;
 use App\Http\Controllers\FanpageFollowerController;
 use Illuminate\Support\Facades\Route;
-use Spatie\Health\Checks\Checks\DatabaseCheck;
-use Spatie\Health\Checks\Checks\DebugModeCheck;
-use Spatie\Health\Checks\Checks\EnvironmentCheck;
-use Spatie\Health\Checks\Checks\PingCheck;
-use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
-use Spatie\Health\Facades\Health;
+
 use Spatie\Health\Http\Controllers\HealthCheckResultsController;
 
 require __DIR__ . '/auth.php';
@@ -63,12 +58,14 @@ Route::middleware(['auth',  'verified'])->group(function () {
     Route::get('/posts/{post}/comments', [CommentController::class, 'getCommentsForPost']);
     Route::post('/comments/{comment}/replies', [CommentController::class, 'replyToComment'])->name('comment.reply');
     Route::get('/{user}', [UserController::class, 'profile'])->name('user.profile');
+
+    Route::post('/reports', [ReportController::class, 'store']);
 });
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {
     Route::get('/overview', [AdminDashboardController::class, 'getDashboardData']);
     Route::get('/users', [AdminUserManagementController::class, 'index'])->name('admin.users.index');
-    Route::get('/contents', [AdminContentManagementController::class, 'index']);
+    Route::get('/reports', [AdminReportManagementController::class, 'index']);
     Route::get('/health', HealthCheckResultsController::class);
     Route::post('/users/set-inactive', [AdminUserManagementController::class, 'setInactive']);
     Route::post('/users/set-active', [AdminUserManagementController::class, 'setActive']);

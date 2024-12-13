@@ -44,7 +44,7 @@ const AdminSidebar = ()  => {
             {sidebarOpen && "Users"}
           </Link>
           <Link
-            href="/admin/contents"
+            href="/admin/reports"
             onClick={() => handleActiveTab("content")}
             className={`flex items-center w-full p-3 rounded-lg ${activeTab === "content" ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
           >
