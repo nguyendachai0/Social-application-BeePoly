@@ -35,7 +35,7 @@ class AdminUserManagementController extends Controller
             'dataUsersPerPage' => $usersPerPage
         ]);
     }
-
+    // Set ngươi dùng không ko kích hoạthoạt
     public function setInactive(Request $request)
     {
         $userIds = $request->input('user_ids');

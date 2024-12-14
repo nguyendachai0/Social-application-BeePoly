@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -132,10 +133,10 @@ class User extends Authenticatable
     {
         $userId = $user->id;
         $query = User::select(['users.*', 'messages.message as last_message', 'messages.created_at as last_message_date'])
-            // ->where('users.id', '!=', $userId)
-            // ->when(!$user->is_admin, function ($query) {
-            //     $query->whereNull('users.blocked_at');
-            // })
+            ->where('users.id', '!=', $userId)
+            ->when(!$user->is_admin, function ($query) {
+                $query->whereNull('users.blocked_at');
+            })
             ->leftJoin('conversations', function ($join) use ($userId) {
                 $join->on('conversations.user_id1', '=',  'users.id')
                     ->where('conversations.user_id2', '=', $userId)
@@ -208,5 +209,35 @@ class User extends Authenticatable
     public function fanpages()
     {
         return $this->hasMany(Fanpage::class);
+    }
+
+    public static function getFriendsWithoutConversation(User $user)
+    {
+        $userId = $user->id;
+
+        return User::select('users.*')
+            ->join('friend_requests', function ($join) use ($userId) {
+                $join->on('friend_requests.sender_id', '=', 'users.id')
+                    ->orWhere('friend_requests.receiver_id', '=', 'users.id');
+            })
+            ->where(function ($query) use ($userId) {
+                $query->where('friend_requests.receiver_id', '=', $userId)
+                    ->orWhere('friend_requests.sender_id', '=', $userId);
+            })
+            ->where('users.id', '!=', $userId) // Exclude the current user
+            ->whereNotExists(function ($query) use ($userId) {
+                $query->select(DB::raw(1))
+                    ->from('conversations')
+                    ->where(function ($subquery) use ($userId) {
+                        $subquery->whereColumn('conversations.user_id1', '=', 'users.id')
+                            ->where('conversations.user_id2', '=', $userId)
+                            ->orWhere(function ($subsubquery) use ($userId) {
+                                $subsubquery->whereColumn('conversations.user_id2', '=', 'users.id')
+                                    ->where('conversations.user_id1', '=', $userId);
+                            });
+                    });
+            })
+            ->orderBy('users.first_name') // Optional: Sort by name
+            ->get();
     }
 }
