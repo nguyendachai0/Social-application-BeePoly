@@ -30,7 +30,7 @@ class AdminUserManagementController extends Controller
 
         Log::info($users);
 
-        return Inertia::render('AdminUserManagement', [
+        return Inertia::render('Admin/AdminUserManagement', [
             'users' => $users,
             'dataUsersPerPage' => $usersPerPage
         ]);

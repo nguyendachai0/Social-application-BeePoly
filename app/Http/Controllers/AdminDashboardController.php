@@ -47,7 +47,7 @@ class AdminDashboardController extends Controller
         ];
 
         // Pass data to Inertia page
-        return Inertia::render('Admin', [
+        return Inertia::render('Admin/Admin', [
             'stats' => $stats,
             'userGrowthData' => $userGrowthData,
             'demographicsData' => $demographics,

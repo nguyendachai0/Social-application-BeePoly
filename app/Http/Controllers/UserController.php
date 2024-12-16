@@ -49,7 +49,7 @@ class UserController extends Controller
 
         $posts = $this->postService->getUserPosts($profile->id);
 
-        return Inertia::render('ProfilePage', [
+        return Inertia::render('Client/ProfilePage', [
             'profile' => $profile,
             'isOwner' => $authUserId === $profileId,
             'initialProfileFriends' =>  $profile->friends,

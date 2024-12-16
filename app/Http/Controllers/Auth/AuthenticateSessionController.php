@@ -41,6 +41,7 @@ class AuthenticateSessionController extends Controller
             : ['phone' => $contactInfo, 'password' => $request->password];
 
         if (Auth::attempt($credentials)) {
+            Log::info(['creadentials' =>  $credentials]);
             $request->session()->regenerate();
             return redirect()->intended(route('dashboard', absolute: false));
         } else {

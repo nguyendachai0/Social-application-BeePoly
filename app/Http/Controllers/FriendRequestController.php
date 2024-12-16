@@ -26,7 +26,7 @@ class FriendRequestController extends Controller
             ->with('sender')
             ->get();
 
-        return Inertia::render('FriendsPage', [
+        return Inertia::render('Client/FriendsPage', [
             'initialFriends' => $friends,
             'initialFriendRequests' => $friendRequests,
         ]);

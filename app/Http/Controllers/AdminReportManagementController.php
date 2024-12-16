@@ -10,6 +10,6 @@ class AdminReportManagementController extends Controller
     public function index()
     {
         $reports = Report::all();
-        return Inertia::render('AdminReportManagement', ['reports' =>  $reports]);
+        return Inertia::render('AdminAdminReportManagement', ['reports' =>  $reports]);
     }
 }

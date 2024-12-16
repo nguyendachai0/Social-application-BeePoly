@@ -23,7 +23,7 @@ class FanpageController extends Controller
         $posts = $this->postService->getPostsForFanpage($id);
         $isFollowed = $fanpage->followers()->where('user_id', auth()->id())->exists();
 
-        return Inertia::render('FanpageView', [
+        return Inertia::render('Client/FanpageView', [
             'fanpage' => $fanpage,
             'initialPosts' => $posts,
             'isOwner' => $isOwner,

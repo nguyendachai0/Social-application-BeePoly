@@ -19,7 +19,7 @@ class HomeController extends Controller
         $user = auth()->user();
         $posts = $this->postService->getPostsForUser($user->id);
 
-        return Inertia::render('Home', [
+        return Inertia::render('Client/Home', [
             'initialPosts' => $posts,
         ]);
     }
