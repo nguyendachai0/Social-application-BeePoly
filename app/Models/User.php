@@ -224,7 +224,7 @@ class User extends Authenticatable
                 $query->where('friend_requests.receiver_id', '=', $userId)
                     ->orWhere('friend_requests.sender_id', '=', $userId);
             })
-            ->where('users.id', '!=', $userId) // Exclude the current user
+            ->where('users.id', '!=', $userId)
             ->whereNotExists(function ($query) use ($userId) {
                 $query->select(DB::raw(1))
                     ->from('conversations')
@@ -237,7 +237,7 @@ class User extends Authenticatable
                             });
                     });
             })
-            ->orderBy('users.first_name') // Optional: Sort by name
+            ->orderBy('users.first_name')
             ->get();
     }
 }

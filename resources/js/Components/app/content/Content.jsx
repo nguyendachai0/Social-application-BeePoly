@@ -4,8 +4,7 @@ import { useEffect } from "react";
 import Post from "@/Components/post/Post";
 import CreatePost from "@/Components/createPost/CreatePost";
 
-const Content = ({user, initialPosts}) => {
-    const [newStory, setNewStory] = useState("");
+const Content = ({user, initialPosts, handleEditPost}) => {
     const [posts, setPosts] = useState([]);
 
   const [mediaPreview, setMediaPreview] = useState(null);
@@ -43,7 +42,6 @@ useEffect(() => {
     }
 
     useEffect(() => {
-      console.log('user.id', user.id);
       const channel = Echo.private(`user-feed.${user.id}`)
           .listen('PostCreated', (e) => {
               console.log('New post by a friend:', e.post);
@@ -55,20 +53,27 @@ useEffect(() => {
 
       }))
   }, [user.id]);
+
+
     return (
         
-        <>
-           
+        <>       
            <div className="col-span-6">
            <CreatePost/>
              {posts.length > 0 ? (
                     posts.map((post) => (
-                        <Post key={post.id} post={post}/>
+                        <Post 
+                        key={post.id} 
+                        post={post} 
+                        isOwnerPost={post.user_id === user.id}
+                        handleEditPost={handleEditPost}
+                        />
                     ))
                 ) : (
                    <></>
                 )}
                </div>
+            
 
         </>
     );

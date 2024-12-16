@@ -39,6 +39,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'csrfToken' => csrf_token(),
             'conversations' => Auth::id() ? Conversation::getConversationsForSideBar(Auth::user()) : [],
             'friends' =>  $user ? $user->friends : [],
             'notifications' => $user ? Notification::loadNotificationsForUser($user->id) : []

@@ -465,7 +465,9 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
             <div className="mt-8 space-y-6">
             {initialPosts.length > 0 ? (
                     initialPosts.map((post) => (
-                        <Post key={post.id} post={post}/>
+                        <Post key={post.id} post={post}
+                        isOwnerPost={true}
+                        />
                     ))
                 ) : (
                     <p>No posts available</p>

@@ -6,6 +6,7 @@ use App\Events\PostCreated;
 use Illuminate\Http\Request;
 use App\Services\Posts\PostServiceInterface;
 use App\Http\Requests\StorePostRequest;
+use Inertia\Inertia;
 
 class PostController extends Controller
 {
@@ -62,16 +63,18 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(StorePostRequest $request, string $id)
     {
-        $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'caption' => 'string',
-            'attachements.*' => 'file|mimes:jpg,png,pdf,docx|max:2048'
-        ]);
-        $data = $request->all();
-        $post = $this->postService->updatePost($id, $data);
-        return response()->json($post);
+        $data = [
+            'user_id' => auth()->id(),
+            'caption' => $request->input('caption'),
+            'attachments' => $request->file('attachments'),
+            'fanpage_id' => $request->input('fanpage_id')
+        ];
+
+        $this->postService->updatePost($id, $data);
+
+        return back();
     }
 
     /**

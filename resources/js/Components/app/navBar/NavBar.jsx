@@ -121,9 +121,9 @@ import CreateGroupChat from "../CreateGroupChat";
                 placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-72 px-5 py-3 rounded-full bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-white/70 backdrop-blur-sm"
+                className="w-72 px-5 py-1 rounded-full bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-white/70 backdrop-blur-sm"
               />
-              <FaSearch className="absolute right-4 top-3.5 text-white/70" />
+              <FaSearch className="absolute right-4 top-2.5 text-white/70" />
             </div>
           );
 
@@ -309,7 +309,7 @@ import CreateGroupChat from "../CreateGroupChat";
       <>
 <nav className="sticky top-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 shadow-lg z-50">
                 <div className="max-w-7xl mx-auto px-4">
-                  <div className="flex justify-between items-center h-20">
+                  <div className="flex justify-between items-center h-12">
                     <div className="flex items-center">
                       <Link href="/" className="flex items-center space-x-2">
                         <GiBee className="text-4xl text-white" />
