@@ -8,8 +8,11 @@ import useLikes from "@/utils/hooks/useLikes";
 import useReport from '@/utils/hooks/useReport';
 import useComments from "@/utils/hooks/useComments";
 import { useState } from 'react';
+import { useDeletePost } from '@/utils/hooks/useDeletePost';
 
-export default function Post({ post, isOwnerPost, handleEditPost}) {
+export default function Post({ post, isOwnerPost, handleEditPost, setPosts}) {
+  const csrfToken = usePage().props.csrfToken;
+
   const [currentImageIndex, setCurrentImageIndex] = useState({
     [post.id]: 0,
   });
@@ -20,6 +23,16 @@ export default function Post({ post, isOwnerPost, handleEditPost}) {
      }));
   };
 
+  const {
+    showDeleteModal,
+    setShowDeleteModal,
+    handleDelete,
+    confirmDelete,
+  } = useDeletePost(setPosts);
+
+  
+
+
   const handlePrevImage = (postId) => {
     setCurrentImageIndex(prev => ({
       ...prev,
@@ -28,7 +41,6 @@ export default function Post({ post, isOwnerPost, handleEditPost}) {
   };
 
 
-  const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
  
   const { likes, isLiked, toggleLike } = useLikes(
     post.reactions?.length || 0,
@@ -57,37 +69,34 @@ export default function Post({ post, isOwnerPost, handleEditPost}) {
     handleReport,
   } = useReport();
 
-  const handleUpdatePost = async (e) => {
-    e.preventDefault();
+  const DeleteConfirmationModal = () => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+        <div className="text-center">
+          <FaTrash className="mx-auto text-red-500 text-4xl mb-4" />
+          <h3 className="text-xl font-bold text-gray-900 mb-2">Delete Post</h3>
+          <p className="text-gray-500 mb-6">
+            Are you sure you want to delete this post? This action cannot be undone.
+          </p>
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => setShowDeleteModal(false)}
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition duration-200"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmDelete}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition duration-200"
+            >
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
-    const formData = new FormData();
-    
-    formData.append("caption",post.caption);
-    post.attachments.forEach((file, index) => {
-        formData.append(`attachments[${index}]`, file); 
-    });
-
-    if (fanpageId) {
-      formData.append("fanpage_id", fanpageId); 
-    }
-
-    try {
-        const response = await axios.put(`/posts/${post.id}`, formData,{
-            headers:{
-                "Content-Type": "multipart/form-data",
-         }
-        });
-
-        toast.success("Post updated successfully!");
-    } catch (error) {
-        if (error.response && error.response.data.errors) {
-            const formattedErrors = formatErrors(error.response.data.errors); 
-            toast.error(formattedErrors); 
-                    } else {
-                        toast.error("An error occurred while creating the post.");           
-                     }         
-                     }        
-  };
 
   return (
    
@@ -225,6 +234,8 @@ export default function Post({ post, isOwnerPost, handleEditPost}) {
                 {commentSections[post.id] && (
                   <CommentSection handleReport={handleReport} postId={post.id} comments={commentSections[post.id]} />
                 )}
+
+                {showDeleteModal && <DeleteConfirmationModal />}
               </div>
               {showReportModal && <ReportModal 
               reportTarget={reportTarget}

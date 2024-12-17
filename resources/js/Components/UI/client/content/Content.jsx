@@ -45,6 +45,7 @@ const Content = ({user, posts, handleEditPost, setPosts}) => {
                         post={post} 
                         isOwnerPost={post.user_id === user.id}
                         handleEditPost={handleEditPost}
+                        setPosts={setPosts}
                         />
                     ))
                 ) : (
