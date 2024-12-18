@@ -57,7 +57,7 @@ class UserController extends Controller
             'countFollowers' => $profile->followers_count  + count($profile->friends),
             'friendRequest' => $friendRequest,
             'friendStatus' => $friendStatus,
-            'posts' => $posts,
+            'initialPosts' => $posts,
             'countPosts'  =>  count($posts),
             'initialFanpages' => $profile->fanpages
         ]);

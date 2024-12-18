@@ -35,4 +35,14 @@ class Post extends Model
     {
         return $this->belongsTo(Fanpage::class);
     }
+
+    public function tags()
+    {
+        return $this->hasMany(PostTag::class);
+    }
+
+    public function taggedUsers()
+    {
+        return $this->belongsToMany(User::class, 'post_tags', 'post_id', 'user_id');
+    }
 }

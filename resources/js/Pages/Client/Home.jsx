@@ -5,7 +5,6 @@ import EditPostModal from "@/Components/UI/client/post/EditPostModal";
 import { useEditPost } from "@/utils/hooks/useEditPost";
 
 const Home = ({ auth, initialPosts }) => {
-  console.log('auth', auth)
     const [posts, setPosts] = useState(initialPosts);
     const {
         editPost,
@@ -20,21 +19,6 @@ const Home = ({ auth, initialPosts }) => {
         handleFileChange,
         handleUpdatePost,
       } = useEditPost(setPosts);
-
-    // useEffect(() => {
-    //     const fetchPosts = async () => {
-    //         try {
-    //             const response = await fetch('/posts');
-    //             const data = await response.json();
-    //             setPosts(data);
-    //             console.log("Fetched data:", data);
-    //         } catch (error) {
-    //             console.error("Error fetching posts:", error);
-    //         }
-    //     };
-
-    //     fetchPosts();
-    // }, []);
 
     return (
         <div className="col-span-6">

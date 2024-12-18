@@ -20,6 +20,7 @@ class PostRepository implements PostRepositoryInterface
             ->with('attachments')
             ->with('reactions')
             ->with('comments')
+            ->with('taggedUsers')
             ->latest()
             ->get();
     }
@@ -34,6 +35,7 @@ class PostRepository implements PostRepositoryInterface
             ->with('attachments')
             ->with('reactions')
             ->with('comments')
+            ->with('taggedUsers')
             ->latest()
             ->get();
     }
@@ -45,6 +47,7 @@ class PostRepository implements PostRepositoryInterface
             ->with('attachments')
             ->with('reactions')
             ->with('comments')
+            ->with('taggedUsers')
             ->latest()
             ->get();
     }

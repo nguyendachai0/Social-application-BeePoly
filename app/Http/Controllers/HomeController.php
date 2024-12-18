@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\Posts\PostServiceInterface;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class HomeController extends Controller
@@ -18,7 +19,6 @@ class HomeController extends Controller
     {
         $user = auth()->user();
         $posts = $this->postService->getPostsForUser($user->id);
-
         return Inertia::render('Client/Home', [
             'initialPosts' => $posts,
         ]);

@@ -9,13 +9,17 @@ import {  FaCamera,  FaTimes,  FaImage, FaUsers, FaGlobe, FaLock } from "react-i
 import CreateFanpage from '@/Components/UI/client/CreateFanpage';
 import Post from '@/Components/UI/client/post/Post';
 import { toast } from 'react-toastify';
+import { useEditPost } from '@/utils/hooks/useEditPost';
+import EditPostModal from '@/Components/UI/client/post/EditPostModal';
 
 
 
 
-const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriends, initialProfileFriends, posts: initialPosts, isOwner, countFollowers, countPosts, friendStatus, initialFanpages }) => {
+const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriends, initialProfileFriends, initialPosts, isOwner, countFollowers, countPosts, friendStatus, initialFanpages }) => {
   const [activeTab, setActiveTab] = useState("posts");
   const [isEditing, setIsEditing] = useState(false);
+  const [posts, setPosts] = useState(initialPosts);
+  console.log('posts', posts);
   const friends =  usePage().props.friends;
   const profileId = initialProfile.id;
   const [showCreateFanpage, setShowCreateFanpage] = useState(false);
@@ -23,6 +27,20 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
   const avatarInputRef = useRef(null);
   const coverInputRef = useRef(null);
   const [countFriends, setCountFriends] = useState(initialCountFriends);
+
+   const {
+          editPost,
+          editCaption,
+          editImages,
+          setEditImages,
+          setEditCaption,
+          showEditModal,
+          removeImage,
+          setShowEditModal,
+          handleEditPost,
+          handleFileChange,
+          handleUpdatePost,
+        } = useEditPost(setPosts);
   
 
   const [fanPages, setFanpages] = useState(initialFanpages);
@@ -463,10 +481,10 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
           {/* Posts Feed */}
           {activeTab === "posts" && (
             <div className="mt-8 space-y-6">
-            {initialPosts.length > 0 ? (
-                    initialPosts.map((post) => (
+            {posts.length > 0 ? (
+                    posts.map((post) => (
                         <Post key={post.id} post={post}
-                        isOwnerPost={true}
+                        isOwnerPost={true} handleEditPost={handleEditPost} setPosts={setPosts}
                         />
                     ))
                 ) : (
@@ -528,6 +546,18 @@ const ProfilePage = ({ profile: initialProfile, countFriends: initialCountFriend
            </div>
           )}
           </div>
+          {showEditModal && (
+          <EditPostModal
+          editCaption={editCaption}
+          handleFileChange={handleFileChange}
+          handleUpdatePost={handleUpdatePost}
+          setEditCaption={setEditCaption}
+          editPost={editPost}
+          setShowEditModal={setShowEditModal}
+          editImages={editImages}
+          removeImage={removeImage}
+          />
+        )}
         </div>
   );
 };

@@ -6,7 +6,7 @@ use App\Events\PostCreated;
 use Illuminate\Http\Request;
 use App\Services\Posts\PostServiceInterface;
 use App\Http\Requests\StorePostRequest;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class PostController extends Controller
 {
@@ -25,14 +25,16 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // public function store(StorePostRequest $request)
     public function store(StorePostRequest $request)
     {
-
+        Log::info('requestssss', $request->all());
         $data = [
             'user_id' => auth()->id(),
             'caption' => $request->input('caption'),
             'attachments' => $request->file('attachments'),
-            'fanpage_id' => $request->input('fanpage_id')
+            'fanpage_id' => $request->input('fanpage_id'),
+            'taggedFriends' => $request->input('taggedFriends'),
         ];
 
         $post = $this->postService->createPost($data);
@@ -45,6 +47,10 @@ class PostController extends Controller
 
         foreach ($recipientIds as $id) {
             event(new PostCreated("user-feed.{$id}", $post));
+        }
+
+        if (isset($data['taggedFriends']) && is_array($data['taggedFriends'])) {
+            $post->taggedUsers()->sync($data['taggedFriends']);
         }
 
 

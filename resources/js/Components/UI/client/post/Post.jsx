@@ -9,6 +9,7 @@ import useReport from '@/utils/hooks/useReport';
 import useComments from "@/utils/hooks/useComments";
 import { useState } from 'react';
 import { useDeletePost } from '@/utils/hooks/useDeletePost';
+import { formatMessageDateShort } from '@/helpers';
 
 export default function Post({ post, isOwnerPost, handleEditPost, setPosts}) {
   const csrfToken = usePage().props.csrfToken;
@@ -105,7 +106,23 @@ export default function Post({ post, isOwnerPost, handleEditPost, setPosts}) {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center space-x-2">
                    <UserAvatar user={post.user}/>
-                    <span className="font-semibold">{post.user.first_name} {post.user.sur_name}</span>
+                   <div className="ml-3">
+                    <p className="font-semibold">{post.user.first_name} {post.user.sur_name}</p>
+                    <p className="text-gray-500 text-sm">{formatMessageDateShort(post.created_at)}</p>
+                    {post.tagged_users && post.tagged_users.length > 0 && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          with{" "}
+                          {post.tagged_users.map((friend, index) => (
+                            <span key={friend.id}>
+                              <span className="text-blue-500 hover:underline cursor-pointer">
+                                {friend.first_name} {friend.sur_name}
+                              </span>
+                              {index < post.tagged_users.length - 1 && ", "}
+                            </span>
+                          ))}
+                        </p>
+                      )}
+                      </div>
                   </div>
                   {/* <button 
                     onClick={() => handleReport(post.id, "post")}
@@ -163,11 +180,20 @@ export default function Post({ post, isOwnerPost, handleEditPost, setPosts}) {
                   <div className="relative w-full h-65">
                   {post.attachments && post.attachments.length > 0 ? (
                     <>
+                    {post.attachments[currentImageIndex[post.id]]?.mime.startsWith("video/") ? (
+                      <video
+                      controls
+                      src={`${post.attachments[currentImageIndex[post.id]]?.path}`}
+                      className="w-full h-[26rem] object-cover rounded-lg"
+                    />
+                  ) : (
                     <img
                       src={`${post.attachments[currentImageIndex[post.id]]?.path}`}
                       alt={`Post content ${currentImageIndex[post.id] + 1}`}
                       className="w-full h-65 object-cover rounded-lg"
                     />
+                    )
+                  }
                     {post.attachments.length > 1 && (
                       <>
                         <button

@@ -211,6 +211,11 @@ class User extends Authenticatable
         return $this->hasMany(Fanpage::class);
     }
 
+    public function taggedPosts()
+    {
+        return $this->belongsToMany(Post::class, 'post_tags', 'user_id', 'post_id');
+    }
+
     public static function getFriendsWithoutConversation(User $user)
     {
         $userId = $user->id;
