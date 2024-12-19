@@ -5,6 +5,7 @@ import { BsEmojiSmile, BsEmojiAngry, BsEmojiLaughing, BsEmojiHeartEyes, BsEmojiS
 import CommentForm from "./CommentForm";
 import CommentList from "./CommentList";
 import { router } from '@inertiajs/react';
+import { toast } from "react-toastify";
 
 
 
@@ -134,11 +135,12 @@ const CommentSection = ({ handleReport, postId, comments: initialComments}) => {
                 : comment
             )
           );
+          toast.info("Comment Created successfully");
           setReplyText("");  
           setReplyingTo(null); 
           setReplyImages([]);
         } else {
-          console.error("Failed to submit reply");
+          toast.error("Faild to submit reply, if file's size too large please choose smaller file")
         }
       } catch (error) {
         console.error("Error submitting reply:", error);
@@ -172,6 +174,13 @@ const CommentSection = ({ handleReport, postId, comments: initialComments}) => {
           });
       
           if (response.ok) {
+
+            if (response.status === 413) {
+              toast.error('File size too large. Please choose another file.');
+            } else {
+              toast.error('Something went wrong. Please try again.');
+            }
+
             const newComment = await response.json();
             setComments((prevComments) => [...prevComments, newComment]);
             setComment(""); 
@@ -179,10 +188,10 @@ const CommentSection = ({ handleReport, postId, comments: initialComments}) => {
             setAttachment(null); 
             setChosenFiles([]);
           } else {
-            console.error("Failed to submit comment");
+            toast.error("Faild to submit comment, if file's size too large please choose smaller file")
           }
         } catch (error) {
-          console.error("Error submitting comment:", error);
+          console.log(error);
         } finally {
           setIsSubmitting(false);
         }

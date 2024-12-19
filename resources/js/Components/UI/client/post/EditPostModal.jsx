@@ -37,7 +37,7 @@ const EditPostModal = ({
           </label>
           <input
             type="file"
-            accept="image/*"
+            accept="image/*,video/*" 
             multiple
             onChange={handleFileChange}
             className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -47,13 +47,21 @@ const EditPostModal = ({
          <Attachment attachments={editImages} />
         )} */}
         <div className="mt-4 grid grid-cols-2 gap-2 max-h-[300px] overflow-y-auto">
-        {editImages.map((image, index) => (
+        {editImages.map((media, index) => (
             <div key={index} className="relative">
+              {media.mime.startsWith("image/") ? (
               <img
-                src={image.path}
+                src={media.path}
                 alt={`Preview ${index + 1}`}
-                className="w-full h-40 object-cover rounded-lg"
+                className="w-full h-48 object-cover rounded-lg"
               />
+            ) : (
+              <video
+                src={media.path}
+                className="w-full h-48 object-cover rounded-lg"
+                controls
+              />
+            )}
               <button
                 onClick={() => removeImage(index)}
                 className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600"

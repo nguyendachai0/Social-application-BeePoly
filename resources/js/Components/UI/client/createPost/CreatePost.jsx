@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import CreatePostModal from "./CreatePostModal"; // Adjust the path as needed
 import { router, usePage } from "@inertiajs/react";
+import { toast } from "react-toastify";
 
-const CreatePost = () => {
+const CreatePost = ({fanpageId, setPosts}) => {
   const [newPost, setNewPost] = useState({
     caption: "",
     attachments: [],
@@ -68,14 +69,19 @@ const CreatePost = () => {
     });
     formData.append("mediaType", newPost.mediaType);
     formData.append("taggedFriends", JSON.stringify(newPost.taggedFriends.map(friend => friend.id)));
-    
+
+    if (fanpageId) {
+      formData.append("fanpage_id", fanpageId); // Include fanpage_id if it exists
+    }
+
     // Submit the post data using Inertia's router.post
     router.post("/posts", formData, {
       onSuccess: (page) => {
-        console.log("Post created successfully:", page);
-        setNewPost({ caption: "", attachments: [], taggedFriends: [], mediaType: "image" });
-        setMediaPreview([]);
-        setShowCreatePost(false);
+      toast.success("🦄 Post created successfully!");  
+      setShowCreatePost(false);
+      setPosts(page.props.initialPosts);
+      setNewPost({ caption: "", attachments: [], taggedFriends: [], mediaType: "image" });
+      setMediaPreview([]);
       },
       onError: (errors) => {
         console.error("Error creating post:", errors);

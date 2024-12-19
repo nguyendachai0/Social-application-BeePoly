@@ -24,7 +24,9 @@ const FanpageView = ({fanpage , initialPosts, isOwner, is_followed}) => {
   
   const [newPost, setNewPost] = useState("");
 
-  const attachmentImages = initialPosts.flatMap((post) => 
+  const [posts, setPosts] = useState(initialPosts);
+
+  const attachmentImages = posts.flatMap((post) => 
     post.attachments.filter((attachment) => attachment.mime.startsWith('image/'))
   ).map((attachment) => attachment.path)
   .slice(0, 4);
@@ -217,11 +219,11 @@ const FanpageView = ({fanpage , initialPosts, isOwner, is_followed}) => {
           {/* Left Column - Posts */}
           <div className="lg:col-span-2 space-y-6">
             {/* Create Post */}
-           <CreatePost fanpageId={fanpageId}/>
+           <CreatePost fanpageId={fanpageId} setPosts={setPosts}/>
 
             {/* Posts */}
-            {initialPosts.length > 0 ? (
-                    initialPosts.map((post) => (
+            {posts.length > 0 ? (
+                    posts.map((post) => (
                         <Post key={post.id} post={post}/>
                     ))
                 ) : (

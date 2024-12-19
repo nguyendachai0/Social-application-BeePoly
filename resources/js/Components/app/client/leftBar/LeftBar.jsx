@@ -24,7 +24,7 @@ const LeftBar = () => {
   
   return (
     <div className="col-span-3">
-            <div className="bg-white/80 backdrop-blur-lg rounded-lg shadow-xl p-6 border border-purple-200 sticky mt-4">
+            <div className="bg-white/80 backdrop-blur-lg rounded-lg shadow-xl p-6 border border-purple-200 fixed mt-4 w-72 ml-3">
               <div className="space-y-6">
                 <NavItem href={route('dashboard')} icon={<FaHome />} text="Home" isActive={url == '/' ? true : false} />
                 <NavItem href={route('friends.page')} icon={<FaUserFriends />} text="Friends" isActive={url == '/friends' ? true : false}/>
@@ -33,12 +33,8 @@ const LeftBar = () => {
                 <NavItem icon={<FaCog />} text="Settings" />
               </div>
               <hr className="my-6 border-purple-100" />
-              <h3 className="font-semibold text-gray-700 mb-4">Your Shortcuts</h3>
-              <div className="space-y-4">
-                <ShortcutItem text="Web Development" />
-                <ShortcutItem text="UI/UX Design" />
-                <ShortcutItem text="Digital Marketing" />
-              </div>
+             
+              
             </div>
           </div>
   );

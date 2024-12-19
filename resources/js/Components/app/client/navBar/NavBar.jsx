@@ -10,7 +10,7 @@ import GroupAvatar from "../../../UI/client/GroupAvatar";
 import { GiBee } from "react-icons/gi";
 import { FaUser, FaSignOutAlt, FaEnvelope, FaBell, FaSearch, FaHeart, FaComment, FaChevronDown, FaUsers } from "react-icons/fa";
 import CreateGroupChat from "../../../UI/client/CreateGroupChat";
-
+import { toast } from "react-toastify";
 
     const Navbar = () => {
         const [isChatVisible, setIsChatVisible] = useState(false);
@@ -32,8 +32,13 @@ import CreateGroupChat from "../../../UI/client/CreateGroupChat";
 
         const handleLogout = () => {
           router.post(route('logout'), {}, {
-            onStart: () => console.log('Logging out...'),
-            onSuccess: () => console.log('Successfully logged out!'),
+            onStart: () => {
+              toast.info("Logging out")
+            },
+            onSuccess: () => 
+            {
+              toast.success("Have a nice day")
+            },
             onError: (error) => console.error('Logout error:', error),
           });
         };
@@ -330,7 +335,7 @@ import CreateGroupChat from "../../../UI/client/CreateGroupChat";
                     <div className="p-4 border-b border-purple-100">
                         <h3 className="text-lg font-semibold text-gray-800">Messages</h3>
                     </div>
-                    <div className="max-h-96 overflow-y-auto">
+                    <div className="max-h-96 -y-auto">
         {sortedConversations && sortedConversations.map((conversation) => (
              <div
              key={`${
@@ -432,6 +437,7 @@ import CreateGroupChat from "../../../UI/client/CreateGroupChat";
                 <div className="absolute right-0 mt-2 w-48 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl overflow-hidden z-50 border border-purple-200">
                   <div className="p-4 border-b border-purple-100">
                   <Link 
+                   onClick={() => setShowProfileMenu(false)}
                     href={`${user.email}`} 
                     className="flex items-center space-x-3 no-underline"
   >

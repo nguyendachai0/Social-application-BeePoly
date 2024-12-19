@@ -144,18 +144,23 @@ export default function Post({ post, isOwnerPost, handleEditPost, setPosts}) {
                          
                   {showOptionsMenu === post.id && (
                      <div
-                     className="absolute bg-white rounded-lg shadow-lg py-2 z-50 top-[45px] right-0"
+                     className="absolute bg-white rounded-lg shadow-lg py-2 z-50 top-[60px] right-0"
                      >
                    { isOwnerPost ? (
                       <>
                         <button
-                          onClick={() => handleEditPost(post)}
+                          onClick={() => {
+                            setShowOptionsMenu(false)
+                            handleEditPost(post)}
+                          }
                           className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center"
                         >
                           <FaEdit className="mr-2" /> Edit
                         </button>
                         <button
-                          onClick={() => handleDelete(post.id)}
+                          onClick={() => { 
+                            setShowOptionsMenu(false)
+                            handleDelete(post.id)}}
                           className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-red-500"
                         >
                           <FaTrash className="mr-2" /> Delete

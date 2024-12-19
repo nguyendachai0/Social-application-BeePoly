@@ -34,6 +34,7 @@ export const useEditPost = (setPosts) => {
     
     const newImagePreviews = files.map((file) => ({
       name: file.name,
+      mime:  file.type,
       path: URL.createObjectURL(file),
     }));
   

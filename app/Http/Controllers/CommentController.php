@@ -39,7 +39,7 @@ class CommentController extends Controller
     public function postComment(Request $request, Post $post)
     {
         $validatedData = $request->validate([
-            'comment' => 'required|string',
+            'comment' => 'nullable|string',
             'attachments' => 'nullable|array',
             'attachments.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
@@ -101,7 +101,7 @@ class CommentController extends Controller
     public function replyToComment(Request $request, $commentId)
     {
         $validatedData = $request->validate([
-            'reply' => 'required|min:1',
+            'reply' => 'nullable|min:1',
             'attachments' => 'nullable|array',
             'attachments.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);

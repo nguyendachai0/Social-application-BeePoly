@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Middleware;
 
+
 class HandleInertiaRequests extends Middleware
 {
     /**
@@ -42,7 +43,8 @@ class HandleInertiaRequests extends Middleware
             'csrfToken' => csrf_token(),
             'conversations' => Auth::id() ? Conversation::getConversationsForSideBar(Auth::user()) : [],
             'friends' =>  $user ? $user->friends : [],
-            'notifications' => $user ? Notification::loadNotificationsForUser($user->id) : []
+            'notifications' => $user ? Notification::loadNotificationsForUser($user->id) : [],
+
         ];
     }
 }

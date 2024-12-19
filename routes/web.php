@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminReportManagementController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\AdminUserManagementController;
+use App\Http\Controllers\AIController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FriendRequestController;
 use App\Http\Controllers\GroupController;
@@ -60,6 +61,8 @@ Route::middleware(['auth',  'verified'])->group(function () {
     Route::get('/{user}', [UserController::class, 'profile'])->name('user.profile');
 
     Route::post('/reports', [ReportController::class, 'store']);
+
+    Route::post('/api/ai-response', [AIController::class, 'getResponse']);
 });
 
 Route::prefix('admin')->middleware(['auth', 'admin'])->group(function () {

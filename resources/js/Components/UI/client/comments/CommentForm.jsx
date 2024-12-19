@@ -46,7 +46,7 @@ const CommentForm = ({ comment, setComment, error, isSubmitting, handleCommentSu
         <div className="mt-2 flex items-center gap-2">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || (!comment.trim() && chosenFiles.length === 0)}
           className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 flex items-center gap-2"
         >
           {isSubmitting ? (

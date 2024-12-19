@@ -30,6 +30,7 @@ class PostRepository implements PostRepositoryInterface
         $user = User::findOrFail($userId);
         $friends = $user->friends;
         $friendIds = $friends->pluck('id');
+
         return $this->post->whereIn('user_id', $friendIds->merge([$userId]))
             ->with('user')
             ->with('attachments')

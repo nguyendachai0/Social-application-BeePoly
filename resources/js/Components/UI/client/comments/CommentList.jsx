@@ -83,7 +83,7 @@ const CommentList = ({handleReport, comments, toggleReplies, handleReply, handle
                       />
                       <button
                         onClick={() => {
-                          setChosenFiles(replyImages.filter((_, i) => i !== index));
+                          setReplyImages(replyImages.filter((_, i) => i !== index));
                         }}
                         className="absolute top-1 right-1 bg-gray-800 text-white p-1 rounded-full opacity-75 hover:opacity-100"
                       >
@@ -94,6 +94,7 @@ const CommentList = ({handleReport, comments, toggleReplies, handleReply, handle
                   <div className="flex gap-2 mt-2">
                     <button
                       onClick={(e) => handleReplySubmit(e, comment.id)}
+                      disabled={!replyText.trim() && replyImages.length === 0}
                       className="px-3 py-1 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition-colors"
                     >
                       Reply

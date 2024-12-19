@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect} from "react";
 import OverlaySection from "./OverlaySection";
+import { usePage } from "@inertiajs/react";
 import PersonalInfoForm from "./PersonalInfoForm";
 import UseAuthFormState from "./UseAuthFormState";
 import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const AuthForm = () => {
   const {
