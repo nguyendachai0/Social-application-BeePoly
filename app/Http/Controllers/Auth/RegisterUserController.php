@@ -65,7 +65,6 @@ class RegisterUserController extends Controller
             'date_of_birth' => $dateOfBirth,
             'gender' => $request->gender,
             'avatar' => $avatarPath,
-
         ]);
 
         event(new Registered($user));

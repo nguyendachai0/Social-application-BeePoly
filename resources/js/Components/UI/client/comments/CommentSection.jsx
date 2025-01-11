@@ -177,8 +177,6 @@ const CommentSection = ({ handleReport, postId, comments: initialComments}) => {
 
             if (response.status === 413) {
               toast.error('File size too large. Please choose another file.');
-            } else {
-              toast.error('Something went wrong. Please try again.');
             }
 
             const newComment = await response.json();

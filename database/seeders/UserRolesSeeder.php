@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -15,12 +14,15 @@ class UserRolesSeeder extends Seeder
     {
         $userIds = range(2, 80);
 
+        // Fetch valid role IDs dynamically
+        $validRoleIds = DB::table('roles')->whereIn('id', [2, 3])->pluck('id')->toArray();
+
         // Prepare the data for insertion
         $userRoles = [];
         foreach ($userIds as $userId) {
             $userRoles[] = [
                 'user_id' => $userId,
-                'role_id' => rand(2, 3), // Randomly assign role_id 2 or 3
+                'role_id' => $validRoleIds[array_rand($validRoleIds)], // Randomly assign a valid role_id
             ];
         }
 

@@ -1,32 +1,32 @@
 import { useState } from "react";
-import { FiUsers, FiMessageSquare, FiSettings, FiUserPlus, FiActivity} from "react-icons/fi";
+import { FiUsers, FiMessageSquare, FiSettings, FiUserPlus, FiActivity } from "react-icons/fi";
 import { BsGlobe } from "react-icons/bs";
 import { MdOutlineContentPaste } from "react-icons/md";
 import { Link } from "@inertiajs/react";
 
-const AdminSidebar = ()  => {
-    const [activeTab, setActiveTab] = useState("overview");
+const AdminSidebar = () => {
+  const [activeTab, setActiveTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const handleActiveTab = (tab) => {
-    setActiveTab(tab); 
+    setActiveTab(tab);
   };
 
 
-    return (
-        <div className={`${sidebarOpen ? "w-64" : "w-20"} bg-white shadow-lg transition-all duration-300`}>
-        <div className="p-4">
-          <div className="flex items-center justify-between">
-            {sidebarOpen && <h2 className="text-xl font-bold">Admin Panel</h2>}
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 rounded-lg hover:bg-gray-100"
-              aria-label="Toggle Sidebar"
-            >
-              ☰
-            </button>
-          </div>
-          <nav className="mt-8 space-y-4">
+  return (
+    <div className={`${sidebarOpen ? "w-64" : "w-20"} bg-white shadow-lg transition-all duration-300`}>
+      <div className="p-4">
+        <div className="flex items-center justify-between">
+          {sidebarOpen && <h2 className="text-xl font-bold">Admin Panel</h2>}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 rounded-lg hover:bg-gray-100"
+            aria-label="Toggle Sidebar"
+          >
+            ☰
+          </button>
+        </div>
+        <nav className="mt-8 space-y-4">
           <Link
             href="/admin/overview"
             onClick={() => handleActiveTab("overview")}
@@ -51,18 +51,10 @@ const AdminSidebar = ()  => {
             <MdOutlineContentPaste className="mr-3" />
             {sidebarOpen && "Content"}
           </Link>
-          <Link
-            href="/admin/settings"
-            onClick={() => handleActiveTab("settings")}
-            className={`flex items-center w-full p-3 rounded-lg ${activeTab === "settings" ? "bg-blue-500 text-white" : "hover:bg-gray-100"}`}
-          >
-            <FiSettings className="mr-3" />
-            {sidebarOpen && "Settings"}
-          </Link>
-          </nav>
-        </div>
+        </nav>
       </div>
-    )
+    </div>
+  )
 }
 
 export default AdminSidebar;

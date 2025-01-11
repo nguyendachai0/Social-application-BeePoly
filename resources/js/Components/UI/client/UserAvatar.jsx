@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Link } from "@inertiajs/react";
+
 const UserAvatar = ({ user, online = null, altText = "User profile picture", size = "medium" }) => {
     const [imageError, setImageError] = useState(false);
     const isOnline = online === true;
@@ -31,7 +33,8 @@ const UserAvatar = ({ user, online = null, altText = "User profile picture", siz
     return (
         <>
 
-                <div
+                <Link
+                href={user.email}
                 className="relative inline-block"
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
@@ -80,7 +83,7 @@ const UserAvatar = ({ user, online = null, altText = "User profile picture", siz
                   {isOnline ? "Online" : "Offline"}
                 </div>
                 )}
-              </div>
+              </Link>
            
         </>
     );
