@@ -24,7 +24,6 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('sur_name')->nullable();
             $table->string('gender')->nullable();
-            $table->boolean('is_admin')->default(false);
             $table->timestamp('blocked_at')->nullable();
             $table->rememberToken();
             $table->timestamps();
