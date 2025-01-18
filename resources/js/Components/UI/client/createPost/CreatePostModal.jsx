@@ -133,6 +133,7 @@ const CreatePostModal = ({
             <FaVideo className="text-xl" />
             <input
               type="file"
+              multiple
               accept="video/*"
               onChange={handleMediaUpload}
               className="hidden"
