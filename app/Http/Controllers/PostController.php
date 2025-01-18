@@ -28,13 +28,13 @@ class PostController extends Controller
     // public function store(StorePostRequest $request)
     public function store(StorePostRequest $request)
     {
-        Log::info('requestssss', $request->all());
         $data = [
             'user_id' => auth()->id(),
             'caption' => $request->input('caption'),
             'attachments' => $request->file('attachments'),
             'fanpage_id' => $request->input('fanpage_id'),
             'taggedFriends' => $request->input('taggedFriends'),
+            'visibility' => $request->input('visibility')
         ];
 
         $post = $this->postService->createPost($data);
@@ -75,10 +75,18 @@ class PostController extends Controller
             'user_id' => auth()->id(),
             'caption' => $request->input('caption'),
             'attachments' => $request->file('attachments'),
-            'fanpage_id' => $request->input('fanpage_id')
+            'fanpage_id' => $request->input('fanpage_id'),
+            'taggedFriends' => $request->input('taggedFriends'),
+            'visibility' => $request->input('visibility')
         ];
 
         $this->postService->updatePost($id, $data);
+
+        $post = $this->postService->getPostById($id);
+
+        if (isset($data['taggedFriends']) && is_array($data['taggedFriends'])) {
+            $post->taggedUsers()->sync($data['taggedFriends']);
+        }
 
         return back();
     }

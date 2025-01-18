@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('caption')->nullable();
+            // $table->enum('visibility', ['private', 'friends', 'public'])->default('public');
             $table->softDeletes();
             $table->timestamps();
         });

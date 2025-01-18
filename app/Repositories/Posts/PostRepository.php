@@ -15,14 +15,27 @@ class PostRepository implements PostRepositoryInterface
     }
     public function getUserPosts($userId)
     {
+        $authUserId = auth()->id();
+
         return $this->post->where('user_id', $userId)
-            ->with('user')
-            ->with('attachments')
-            ->with('reactions')
-            ->with('comments')
-            ->with('taggedUsers')
-            ->latest()
-            ->get();
+        ->where(function ($query) use ($authUserId, $userId) {
+            if ($authUserId !== $userId) {
+                // Viewing someone else's profile
+                $query->where('visibility', 'public')
+                      ->orWhere(function ($subQuery) use ($authUserId) {
+                          // Include posts visible to friends
+                          $subQuery->where('visibility', 'friends');
+                          
+                        });
+                    }
+                      })
+        ->with('user')
+        ->with('attachments')
+        ->with('reactions')
+        ->with('comments')
+        ->with('taggedUsers')
+        ->latest()
+        ->get();
     }
 
     public function getPostsForUser($userId)
@@ -31,7 +44,11 @@ class PostRepository implements PostRepositoryInterface
         $friends = $user->friends;
         $friendIds = $friends->pluck('id');
 
-        return $this->post->whereIn('user_id', $friendIds->merge([$userId]))
+        return $this->post->where(function ($query) use ($userId, $friendIds) {
+            $query->whereIn('user_id', $friendIds->merge([$userId]))
+            ->where('visibility', '!=', 'private');
+        })
+            ->orWhere('visibility', 'public')
             ->with('user')
             ->with('attachments')
             ->with('reactions')
@@ -40,6 +57,7 @@ class PostRepository implements PostRepositoryInterface
             ->latest()
             ->get();
     }
+    
     public function getPostsForFanpage($fanpageId)
     {
         $fanpage = Fanpage::findOrFail($fanpageId);

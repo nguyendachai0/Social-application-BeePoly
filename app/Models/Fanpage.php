@@ -25,12 +25,12 @@ class Fanpage extends Model
 
     public function getAvatarAttribute($value)
     {
-        return asset('storage/' . $value);
+        return $value ? asset('storage/' . $value) : null;
     }
 
     public function getCoverImageAttribute($value)
     {
-        return asset('storage/' . $value);
+        return $value ? asset('storage/' . $value) : null;
     }
 
     /**

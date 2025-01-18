@@ -7,7 +7,6 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules;
@@ -46,7 +45,6 @@ class AuthenticatedSessionController extends Controller
         ]);
 
         if ($validator->fails()) {
-            // Log::info('Validation errors:', $validator->errors()->all());
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
@@ -58,7 +56,6 @@ class AuthenticatedSessionController extends Controller
             : ['phone' => $contactInfo, 'password' => $request->password];
 
         if (Auth::attempt($credentials)) {
-            // If authentication is successful, regenerate the session and redirect
             $request->session()->regenerate();
             return redirect()->intended(route('dashboard', absolute: false));
         }

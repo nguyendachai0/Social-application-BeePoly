@@ -10,7 +10,6 @@ class AIController extends Controller
 {
     public function getResponse(Request $request)
     {
-        Log::info(['requset' => $request->all()]);
 
         $url = 'https://api.groq.com/openai/v1/chat/completions';
         $apiKey = env('GROQ_API_KEY');
@@ -34,14 +33,10 @@ class AIController extends Controller
                 'Content-Type' => 'application/json',
             ])->post($url, $payload);
 
-            // Log the response
-            Log::info(['groq_ai_response' => $response->json()]);
-
             // Return the assistant's reply
             return response()->json($response->json()['choices'][0]['message']['content']);
         } catch (\Exception $e) {
             // Handle exceptions and log errors
-            Log::error(['error' => $e->getMessage()]);
             return response()->json(['error' => 'Failed to fetch response from Groq AI.'], 500);
         }
     }

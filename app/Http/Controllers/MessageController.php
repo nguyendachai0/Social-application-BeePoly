@@ -8,7 +8,6 @@ use App\Models\Group;
 use App\Models\Message;
 use App\Models\User;
 use App\Services\Messages\MessageServiceInterface;
-use Illuminate\Support\Facades\Log;
 
 class MessageController extends Controller
 {

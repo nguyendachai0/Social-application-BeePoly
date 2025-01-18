@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\Posts\PostServiceInterface;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class HomeController extends Controller

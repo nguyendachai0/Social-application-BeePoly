@@ -8,6 +8,7 @@ use App\Services\Posts\PostServiceInterface;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 
 class UserController extends Controller
@@ -85,5 +86,22 @@ class UserController extends Controller
         $user->save();
 
         return redirect()->back()->with('success', 'Uploaded ' . $type . ' successfully');
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query', '');
+        
+        $users = User::where('first_name', 'like', '%' . $query . '%')
+        ->orWhere('sur_name', 'like', '%' . $query . '%')
+        ->select('id', 'first_name', 'sur_name', 'avatar', 'email')
+        ->limit(6)
+        ->get();
+
+        Log::info(['Search results' => $users]);
+
+        return response()->json([
+        'searchResults' => $users,
+    ]);
     }
 }

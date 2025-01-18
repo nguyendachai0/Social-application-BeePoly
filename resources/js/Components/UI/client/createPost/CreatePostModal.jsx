@@ -3,6 +3,7 @@ import { FaImage, FaTimes, FaUserTag, FaVideo } from "react-icons/fa";
 import UserAvatar from "../UserAvatar";
 
 const CreatePostModal = ({
+  isEditing = false,
   newPost,
   setNewPost,
   mediaPreview,
@@ -15,7 +16,8 @@ const CreatePostModal = ({
   handleMediaUpload,
   setShowCreatePost,
   handleSubmitPost,
-  handleCaptionChange
+  handleCaptionChange,
+  visibilityOptions
 }) => (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
     <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
@@ -29,6 +31,21 @@ const CreatePostModal = ({
         </button>
       </div>
 
+      <div className="mb-4">
+        <div className="flex items-center space-x-2">
+          {visibilityOptions.map((option) => (
+            <button
+              key={option.value}
+              onClick={() => setNewPost(prev => ({ ...prev, visibility: option.value }))}
+              className={`flex items-center space-x-2 px-4 py-2 rounded-full ${newPost.visibility === option.value ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"}`}
+            >
+              <option.icon className="text-lg" />
+              <span>{option.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
       <textarea
         value={newPost.caption}
         onChange={handleCaptionChange}
@@ -40,7 +57,7 @@ const CreatePostModal = ({
         <div className="flex flex-wrap gap-2 mb-2">
           {newPost.taggedFriends.map(friend => (
             <div key={friend.id} className="flex items-center bg-gray-100 rounded-full px-3 py-1">
-              <UserAvatar user={friend} size="small"/>
+              <UserAvatar user={friend} size="small" />
               <span className="ml-1">{friend.first_name} {friend.sur_name}</span>
               <button
                 onClick={() => removeTag(friend.id)}
@@ -66,7 +83,7 @@ const CreatePostModal = ({
                 onClick={() => tagFriend(friend)}
                 className="flex items-center p-2 hover:bg-gray-50 cursor-pointer"
               >
-                <UserAvatar user={friend} size="small"/>
+                <UserAvatar user={friend} size="small" />
                 <span className="ml-2">{friend.first_name} {friend.sur_name}</span>
               </div>
             ))}
@@ -127,7 +144,7 @@ const CreatePostModal = ({
           disabled={!newPost.caption && mediaPreview.length === 0}
           className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
         >
-          Post
+          {isEditing ? "Save Changes" : "Post"}
         </button>
       </div>
     </div>

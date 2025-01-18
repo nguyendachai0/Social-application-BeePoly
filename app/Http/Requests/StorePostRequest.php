@@ -26,6 +26,7 @@ class StorePostRequest extends FormRequest
             'attachments' => 'nullable|array|max:10|required_without:caption',
             'attachments.*' => 'file|max:1024000|mimes:jpg,jpeg,png,pdf,docx,mp4,mov,avi',
             'fanpage_id' => 'nullable|exists:fanpages,id',
+            'visibility' => 'nullable|in:private,friends,public',
             'taggedFriends' => 'nullable|array',
             'taggedFriends.*' => 'exists:users,id',
         ];
@@ -38,6 +39,7 @@ class StorePostRequest extends FormRequest
             'attachments.required_without' => 'You must provide attachments or a caption.',
             'attachments.*.mimes' => 'Each attachment must be one of the following types: jpg, jpeg, png, pdf, docx, mp4, mov, avi.',
             'fanpage_id.exists' => 'The selected fanpage does not exist.',
+            'visibility.in' => 'The visibility must be one of the following: private, friends, or public.',
             'taggedFriends.array' => 'Tagged friends must be an array.',
             'taggedFriends.*.exists' => 'One or more tagged friends are invalid.',
         ];

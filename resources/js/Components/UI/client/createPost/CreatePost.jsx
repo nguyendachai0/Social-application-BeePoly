@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import CreatePostModal from "./CreatePostModal"; // Adjust the path as needed
 import { router, usePage } from "@inertiajs/react";
 import { toast } from "react-toastify";
+import { FaGlobe, FaUserFriends, FaLock } from "react-icons/fa";
 
-const CreatePost = ({fanpageId, setPosts}) => {
+const CreatePost = ({ fanpageId, setPosts }) => {
   const [newPost, setNewPost] = useState({
     caption: "",
     attachments: [],
     taggedFriends: [],
-    mediaType: "image"
+    mediaType: "image",
+    visibility: "public",
   });
   const [mediaPreview, setMediaPreview] = useState([]);
   const [showCreatePost, setShowCreatePost] = useState(false);
@@ -17,7 +19,7 @@ const CreatePost = ({fanpageId, setPosts}) => {
 
   const handleMediaUpload = (e) => {
     const files = Array.from(e.target.files);
-    const validFiles = files.filter(file => 
+    const validFiles = files.filter(file =>
       file.type.startsWith("image/") || file.type.startsWith("video/")
     );
 
@@ -74,14 +76,16 @@ const CreatePost = ({fanpageId, setPosts}) => {
       formData.append("fanpage_id", fanpageId); // Include fanpage_id if it exists
     }
 
+    formData.append("visibility", newPost.visibility);
+
     // Submit the post data using Inertia's router.post
     router.post("/posts", formData, {
       onSuccess: (page) => {
-      toast.success("🦄 Post created successfully!");  
-      setShowCreatePost(false);
-      setPosts(page.props.initialPosts);
-      setNewPost({ caption: "", attachments: [], taggedFriends: [], mediaType: "image" });
-      setMediaPreview([]);
+        toast.success("🦄 Post created successfully!");
+        setShowCreatePost(false);
+        setPosts(page.props.initialPosts);
+        setNewPost({ caption: "", attachments: [], taggedFriends: [], mediaType: "image", visibility: "public" });
+        setMediaPreview([]);
       },
       onError: (errors) => {
         console.error("Error creating post:", errors);
@@ -97,6 +101,12 @@ const CreatePost = ({fanpageId, setPosts}) => {
       caption: event.target.value // Update caption on input change
     }));
   };
+
+  const visibilityOptions = [
+    { value: "public", label: "Public", icon: FaGlobe },
+    { value: "friends", label: "Friends", icon: FaUserFriends },
+    { value: "private", label: "Private", icon: FaLock }
+  ];
 
 
 
@@ -124,6 +134,7 @@ const CreatePost = ({fanpageId, setPosts}) => {
           setShowCreatePost={setShowCreatePost}
           handleCaptionChange={handleCaptionChange}
           handleSubmitPost={handleSubmitPost}
+          visibilityOptions={visibilityOptions}
         />
       )}
     </>

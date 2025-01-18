@@ -58,6 +58,7 @@ Route::middleware(['auth',  'verified'])->group(function () {
     Route::post('/posts/{post}/comments', [CommentController::class,  'postComment']);
     Route::get('/posts/{post}/comments', [CommentController::class, 'getCommentsForPost']);
     Route::post('/comments/{comment}/replies', [CommentController::class, 'replyToComment'])->name('comment.reply');
+    Route::get('/search-users', [UserController::class, 'search'])->name('users.search');
     Route::get('/{user}', [UserController::class, 'profile'])->name('user.profile');
 
     Route::post('/reports', [ReportController::class, 'store']);

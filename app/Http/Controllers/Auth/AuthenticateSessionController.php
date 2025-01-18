@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
@@ -41,7 +40,6 @@ class AuthenticateSessionController extends Controller
             : ['phone' => $contactInfo, 'password' => $request->password];
 
         if (Auth::attempt($credentials)) {
-            Log::info(['creadentials' =>  $credentials]);
             $request->session()->regenerate();
             return redirect()->intended(route('dashboard', absolute: false));
         } else {

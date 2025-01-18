@@ -32,7 +32,6 @@ class Conversation extends Model
     public static function getConversationsForSidebar(User $user)
     {
         $users = User::getUserExceptUser($user);
-        Log::info(['users'  => $users]);
         $groups = Group::getGroupsForUser($user);
         $friendsWithoutConversation = User::getFriendsWithoutConversation($user);
         return $users->map(function (User $user) {

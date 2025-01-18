@@ -14,7 +14,6 @@ class AdminUserManagementController extends Controller
     public function index(Request $request)
     {
         $usersPerPage = $request->get('per_page', 10);
-        Log::info($usersPerPage);
 
         if (!is_numeric($usersPerPage) || $usersPerPage <= 0) {
             $usersPerPage = 10;
@@ -27,8 +26,6 @@ class AdminUserManagementController extends Controller
         $users->getCollection()->transform(function ($user) {
             return $user->toUserArray();
         });
-
-        Log::info($users);
 
         return Inertia::render('Admin/AdminUserManagement', [
             'users' => $users,
