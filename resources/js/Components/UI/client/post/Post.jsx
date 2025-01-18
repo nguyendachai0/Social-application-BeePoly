@@ -191,11 +191,13 @@ export default function Post({ post, isOwnerPost, handleEditPost, setPosts }) {
             {post.attachments && post.attachments.length > 0 ? (
               <>
                 {post.attachments[currentImageIndex[post.id]]?.mime.startsWith("video/") ? (
-                  <video
-                    controls
-                    src={`${post.attachments[currentImageIndex[post.id]]?.path}`}
-                    className="w-full h-[26rem] object-cover rounded-lg"
-                  />
+                  <div className="w-full h-[32rem] bg-black rounded-lg overflow-hidden">
+                    <video
+                      controls
+                      src={`${post.attachments[currentImageIndex[post.id]]?.path}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 ) : (
                   <img
                     src={`${post.attachments[currentImageIndex[post.id]]?.path}`}
