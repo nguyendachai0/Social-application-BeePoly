@@ -92,13 +92,20 @@ class UserController extends Controller
     {
         $query = $request->input('query', '');
         
-        $users = User::where('first_name', 'like', '%' . $query . '%')
-        ->orWhere('sur_name', 'like', '%' . $query . '%')
+        $queryParts = explode(' ', trim($query));
+
+        
+        $users = User::query()
+        ->when(count($queryParts) > 1, function ($q) use ($queryParts) {
+            $q->where('first_name', 'like', '%' . $queryParts[0] . '%')
+              ->where('sur_name', 'like', '%' . implode(' ', array_slice($queryParts, 1)) . '%');
+        }, function ($q) use ($query) {
+            $q->where('first_name', 'like', '%' . $query . '%')
+              ->orWhere('sur_name', 'like', '%' . $query . '%');
+        })
         ->select('id', 'first_name', 'sur_name', 'avatar', 'email')
         ->limit(6)
         ->get();
-
-        Log::info(['Search results' => $users]);
 
         return response()->json([
         'searchResults' => $users,

@@ -1,5 +1,5 @@
 import { FaSearch } from "react-icons/fa";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import UserAvatar from "@/Components/UI/client/UserAvatar";
 import { Link } from "@inertiajs/react";
 
@@ -9,8 +9,7 @@ const SearchBar = () => {
     const [searchResults, setSearchResults] = useState([]);
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [loading, setLoading] = useState(false);
-
-
+    const searchRef = useRef(null);
 
     const handleSearch = async (query) => {
         setSearchQuery(query);
@@ -36,8 +35,21 @@ const SearchBar = () => {
         }
     };
 
+    const handleClickOutside = (event) => {
+        if (searchRef.current && !searchRef.current.contains(event.target)) {
+            setShowSearchResults(false);
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div className="relative search-container">
+        <div className="relative search-container" ref={searchRef}>
             <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
                 type="text"
