@@ -46,7 +46,7 @@ const PersonalInfoForm = ({ data, errors, handleChange, handleSubmit, handleDate
           icon={FaEnvelope}
           name="contactInfo"
           value={data.contactInfo}
-          placeholder="Mobile number or email address"
+          placeholder="Email address"
           error={errors.contactInfo}
           onChange={handleChange}
         />
