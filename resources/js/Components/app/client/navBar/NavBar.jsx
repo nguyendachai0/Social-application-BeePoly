@@ -424,7 +424,7 @@ const Navbar = () => {
               </svg>
             </button>
           </div>
-          {isMenuOpen && <MobileMenu notifications={notifications} markAllAsRead={markAllAsRead} getNotificationIcon={getNotificationIcon} closeMenu={closeMenu} NavLink={NavLink} user={user} sortedConversations={sortedConversations} handleConversationClick={handleConversationClick} />}
+          {isMenuOpen && <MobileMenu notifications={notifications} markAllAsRead={markAllAsRead} handleLogout={handleLogout} getNotificationIcon={getNotificationIcon} closeMenu={closeMenu} NavLink={NavLink} user={user} sortedConversations={sortedConversations} handleConversationClick={handleConversationClick} />}
         </div>
         {
           isChatVisible && selectedConversation && (

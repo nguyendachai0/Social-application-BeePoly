@@ -1,4 +1,5 @@
-import { FaUserFriends, FaUser, FaBell, FaEnvelope, FaChevronDown } from "react-icons/fa";
+import { FaUserFriends, FaUser, FaBell, FaEnvelope, } from "react-icons/fa";
+import { IoLogOut } from "react-icons/io5";
 import SearchBar from "./SeachBar";
 import { GiBee } from "react-icons/gi";
 import UserAvatar from "@/Components/UI/client/UserAvatar";
@@ -6,7 +7,7 @@ import GroupAvatar from "@/Components/UI/client/GroupAvatar";
 import { formatMessageDateShort } from "@/helpers";
 
 
-const MobileMenu = ({ notifications, markAllAsRead, getNotificationIcon, closeMenu, NavLink, user, sortedConversations, handleConversationClick }) => {
+const MobileMenu = ({ notifications, markAllAsRead, handleLogout, getNotificationIcon, closeMenu, NavLink, user, sortedConversations, handleConversationClick }) => {
     const unreadNotifications = notifications.filter(notif => !notif.read).length;
 
     return (
@@ -109,6 +110,12 @@ const MobileMenu = ({ notifications, markAllAsRead, getNotificationIcon, closeMe
                     </div>
 
                 </details>
+                <button
+                    onClick={handleLogout}
+                    className="w-full px-4 py-2 text-left text-white font-medium  flex items-center space-x-2"
+                >
+                    <IoLogOut className="text-3xl" />
+                    Logout</button>
             </div >
         </div >
     );
