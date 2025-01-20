@@ -49,14 +49,14 @@ const SearchBar = () => {
     }, []);
 
     return (
-        <div className="relative search-container" ref={searchRef}>
-            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        <div className="relative search-container w-full max-w-xs sm:max-w-md" ref={searchRef}>
+            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 lg:text-gray-400" />
             <input
                 type="text"
                 placeholder="Search profiles..."
                 value={searchQuery}
                 onChange={(e) => handleSearch(e.target.value)}
-                className="w-72 px-5 py-1 rounded-full bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-white/70 backdrop-blur-sm"
+                className="w-full px-5 py-1 rounded-full bg-white/10 border border-white/20 focus:outline-none focus:ring-2 focus:ring-white/50 text-white placeholder-white/70 backdrop-blur-sm"
             />
             {/* Search Results Dropdown */}
             {showSearchResults && searchResults.length > 0 && (

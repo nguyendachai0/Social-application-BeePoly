@@ -8,10 +8,11 @@ import { useEventBus } from "@/EventBus";
 import UserAvatar from "../../../UI/client/UserAvatar";
 import GroupAvatar from "../../../UI/client/GroupAvatar";
 import { GiBee } from "react-icons/gi";
-import { FaUser, FaSignOutAlt, FaEnvelope, FaBell, FaHeart, FaComment, FaChevronDown, FaUsers } from "react-icons/fa";
+import { FaUser, FaSignOutAlt, FaEnvelope, FaBell, FaHeart, FaComment, FaChevronDown, FaUsers, FaUserFriends } from "react-icons/fa";
 import CreateGroupChat from "../../../UI/client/CreateGroupChat";
 import { toast } from "react-toastify";
 import SearchBar from "./SeachBar";
+import MobileMenu from "./MobileMenu";
 
 const Navbar = () => {
   const [isChatVisible, setIsChatVisible] = useState(false);
@@ -21,15 +22,15 @@ const Navbar = () => {
   const user = page.props.auth.user;
   const conversations = page.props.conversations;
   const [localConversations, setLocalConversations] = useState([]);
-  const [localMessages, setLocalMessages] = useState([]);
   const conversationMenu = document.getElementById("conversationMenu");
   const [hiddenConversations, setHiddenConversations] = useState({});
-  const [searchQuery, setSearchQuery] = useState("");
   const [notifications, setNotifications] = useState(page.props.notifications);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
 
-
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+  };
 
   const handleLogout = () => {
     router.post(route('logout'), {}, {
@@ -68,8 +69,10 @@ const Navbar = () => {
 
   const { emit, on } = useEventBus();
 
-  const NavLink = ({ icon, text, href }) => (
-    <Link href={href} className="flex items-center space-x-2 text-white hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">
+  const NavLink = ({ icon, text, href, onClick }) => (
+    <Link href={href}
+      className="flex items-center space-x-2 text-white hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
+      onClick={onClick}>
       {icon}
       <span className="font-medium">{text}</span>
     </Link>
@@ -116,13 +119,7 @@ const Navbar = () => {
   }
 
   const [sortedConversations, setSortedConversations] = useState([]);
-  const onSearch = (ev) => {
-    const search = ev.target.value.toLowerCase();
-    setLocalConversations(conversations.filter((conversation) => {
-      return conversation.name.toLowerCase().includes(search);
-    })
-    );
-  };
+
   const handleChatClose = (conversationId) => {
     setSelectedConversation((prevSelected) => {
       const updated = prevSelected.filter(conv => conv.id !== conversationId);
@@ -267,28 +264,6 @@ const Navbar = () => {
     };
   }, [user.id]);
 
-  const handleFriendSelection = (friendId) => {
-    setSelectedFriends(prev => {
-      if (prev.includes(friendId)) {
-        return prev.filter(id => id !== friendId);
-      }
-      return [...prev, friendId];
-    });
-  };
-
-  const handleCreateGroup = () => {
-    if (groupName && selectedFriends.length >= 2) {
-      console.log("Creating group:", {
-        name: groupName,
-        members: selectedFriends
-      });
-      setShowModal(false);
-      setGroupName("");
-      setSelectedFriends([]);
-    }
-  };
-
-
   return (
     <>
       <nav className="sticky top-0 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 shadow-lg z-50">
@@ -297,24 +272,27 @@ const Navbar = () => {
             <div className="flex items-center">
               <Link href="/" className="flex items-center space-x-2">
                 <GiBee className="text-4xl text-white" />
-                <span className="text-2xl font-bold text-white">Bee Poly</span>
+                <span className="md:text-small lg:text-2xl font-bold text-white">Bee Poly</span>
               </Link>
+
               <div className="hidden md:flex items-center ml-6 space-x-4">
                 <SearchBar />
               </div>
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <NavLink href="/" icon={<GiBee className="text-xl" />} text="Home" />
+              <div className="lg:hidden">
+                <NavLink href={route('friends.page')} icon={<FaUserFriends />} text="Friends" />
+              </div>
               <details className="dropdown dropdown-end" id="conversationMenu">
                 <summary className="flex items-center space-x-2 text-white hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">
                   <FaEnvelope className="text-xl" />
-                  <FaChevronDown className="text-sm" />
                 </summary>
                 <div className="absolute right-0 mt-2 w-96 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl overflow-hidden z-50 border border-purple-200">
                   <div className="p-4 border-b border-purple-100">
                     <h3 className="text-lg font-semibold text-gray-800">Messages</h3>
                   </div>
-                  <div className="max-h-96 -y-auto">
+                  <div className="max-h-96  overflow-y-auto">
                     {sortedConversations && sortedConversations.map((conversation) => (
                       <div
                         key={`${conversation.is_group ? "group_" : "user_"
@@ -347,62 +325,52 @@ const Navbar = () => {
                 </div>
 
               </details>
-              <div className="relative">
-                <button
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="flex items-center space-x-2 text-white hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
-                >
-                  <div className="relative">
-                    <FaBell className="text-xl" />
-                    {/* {unreadNotifications > 0 && (
-                              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                                {unreadNotifications}
-                              </span>
-                            )} */}
+
+              <details className="dropdown dropdown-end" id="notificationMenu">
+                <summary className="flex items-center space-x-2 text-white hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">
+                  <FaBell className="text-xl" />
+                </summary>
+                <div className="absolute right-0 mt-2 w-96 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl overflow-hidden z-50 border border-purple-200">
+                  <div className="p-4 border-b border-purple-100 flex justify-between items-center">
+                    <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
+                    <button
+                      onClick={markAllAsRead}
+                      className="text-sm text-purple-600 hover:text-purple-800"
+                    >
+                      Mark all as read
+                    </button>
                   </div>
-                </button>
-                {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-96 bg-white/95 backdrop-blur-lg rounded-lg shadow-xl overflow-hidden z-50 border border-purple-200">
-                    <div className="p-4 border-b border-purple-100 flex justify-between items-center">
-                      <h3 className="text-lg font-semibold text-gray-800">Notifications</h3>
-                      <button
-                        onClick={markAllAsRead}
-                        className="text-sm text-purple-600 hover:text-purple-800"
+                  <div className="max-h-96 overflow-y-auto">
+                    {notifications.map((notification) => (
+                      <div
+                        key={notification.id}
+                        className={`p-4 border-b border-purple-100 hover:bg-purple-50 ${!notification.read ? "bg-purple-50" : ""}`}
+                        onClick={() => markAsRead(notification.id)}
                       >
-                        Mark all as read
-                      </button>
-                    </div>
-                    <div className="max-h-96 overflow-y-auto">
-                      {notifications.map((notification) => (
-                        <div
-                          key={notification.id}
-                          className={`p-4 border-b border-purple-100 hover:bg-purple-50 ${!notification.read ? "bg-purple-50" : ""}`}
-                          onClick={() => markAsRead(notification.id)}
-                        >
-                          <div className="flex items-center space-x-3">
-                            <div className="relative">
-                              <UserAvatar user={notification.user} />
-                              <div className="absolute -bottom-1 -right-1 p-1 bg-white rounded-full">
-                                {getNotificationIcon(notification.type)}
-                              </div>
+                        <div className="flex items-center space-x-3">
+                          <div className="relative">
+                            <UserAvatar user={notification.user} />
+                            <div className="absolute -bottom-1 -right-1 p-1 bg-white rounded-full">
+                              {getNotificationIcon(notification.type)}
                             </div>
-                            <div className="flex-1">
-                              <p className="text-sm text-gray-800">
-                                <span className="font-semibold">{notification.user.first_name} {notification.user.sur_name}</span>{" "}
-                                {notification.content}
-                              </p>
-                              <span className="text-xs text-gray-500">{notification.time}</span>
-                            </div>
-                            {!notification.read && (
-                              <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                            )}
                           </div>
+                          <div className="flex-1">
+                            <p className="text-sm text-gray-800">
+                              <span className="font-semibold">{notification.user.first_name} {notification.user.sur_name}</span>{" "}
+                              {notification.content}
+                            </p>
+                            <span className="text-xs text-gray-500">{notification.time}</span>
+                          </div>
+                          {!notification.read && (
+                            <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          )}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                   </div>
-                )}
-              </div>
+                </div>
+
+              </details>
               <div className="relative">
                 <button
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
@@ -456,12 +424,12 @@ const Navbar = () => {
               </svg>
             </button>
           </div>
-          {isMenuOpen && <MobileMenu notifications={notifications} />}
+          {isMenuOpen && <MobileMenu notifications={notifications} markAllAsRead={markAllAsRead} getNotificationIcon={getNotificationIcon} closeMenu={closeMenu} NavLink={NavLink} user={user} sortedConversations={sortedConversations} handleConversationClick={handleConversationClick} />}
         </div>
         {
           isChatVisible && selectedConversation && (
             <>
-              <div className="flex w-300 h-98 fixed bottom-0 right-12 z-[1]">
+              <div className="flex w-300 h-98 fixed bottom-0 right-12 z-[1] ">
                 {selectedConversation.map((conversation) => {
                   const isHidden = hiddenConversations[conversation.id];
                   return !isHidden && (

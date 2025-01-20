@@ -5,7 +5,6 @@ import EditPostModal from "@/Components/UI/client/post/EditPostModal";
 import { useEditPost } from "@/utils/hooks/useEditPost";
 
 const Home = ({ auth, initialPosts }) => {
-  console.log(initialPosts);
   const [posts, setPosts] = useState(initialPosts);
   const {
     editPost,
@@ -30,30 +29,28 @@ const Home = ({ auth, initialPosts }) => {
   } = useEditPost(setPosts);
 
   return (
-    <div className="col-span-6">
-      <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
-        <Content user={auth?.user} posts={posts} handleEditPost={handleEditPost} setPosts={setPosts} />
-        {showEditModal && (
-          <EditPostModal
-            editCaption={editCaption}
-            handleFileChange={handleFileChange}
-            handleUpdatePost={handleUpdatePost}
-            setEditCaption={setEditCaption}
-            editPost={editPost}
-            setShowEditModal={setShowEditModal}
-            editImages={editImages}
-            removeImage={removeImage}
-            taggedFriends={taggedFriends}
-            friendsList={friendsList}
-            showFriendsList={showFriendsList}
-            setShowFriendsList={setShowFriendsList}
-            tagFriend={tagFriend}
-            removeTag={removeTag}
-            visibilityOptions={visibilityOptions}
-            setEditPost={setEditPost}
-          />
-        )}
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
+      <Content user={auth?.user} posts={posts} handleEditPost={handleEditPost} setPosts={setPosts} />
+      {showEditModal && (
+        <EditPostModal
+          editCaption={editCaption}
+          handleFileChange={handleFileChange}
+          handleUpdatePost={handleUpdatePost}
+          setEditCaption={setEditCaption}
+          editPost={editPost}
+          setShowEditModal={setShowEditModal}
+          editImages={editImages}
+          removeImage={removeImage}
+          taggedFriends={taggedFriends}
+          friendsList={friendsList}
+          showFriendsList={showFriendsList}
+          setShowFriendsList={setShowFriendsList}
+          tagFriend={tagFriend}
+          removeTag={removeTag}
+          visibilityOptions={visibilityOptions}
+          setEditPost={setEditPost}
+        />
+      )}
     </div>
   );
 };

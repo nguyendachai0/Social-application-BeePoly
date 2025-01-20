@@ -8,7 +8,7 @@ import { router } from '@inertiajs/react';
 import { toast } from "react-toastify";
 
 
-const FriendsPage = ({initialFriends, initialFriendRequests}) => {
+const FriendsPage = ({ initialFriends, initialFriendRequests }) => {
   const [friendRequests, setFriendRequests] = useState(initialFriendRequests);
   const [friends, setFriends] = useState(initialFriends);
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,12 +22,12 @@ const FriendsPage = ({initialFriends, initialFriendRequests}) => {
     router.post("/accept-friend-request", { senderId }, {
       onSuccess: (page) => {
         toast.success("Friend request accepted successfully!", {
-            position: "top-right",
-            autoClose: 3000, 
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
         });
         setFriends(page.props.initialFriends);
         setFriendRequests(page.props.initialFriendRequests);
@@ -43,12 +43,12 @@ const FriendsPage = ({initialFriends, initialFriendRequests}) => {
     router.post("/decline-friend-request", { senderId }, {
       onSuccess: (page) => {
         toast.success("Friend request declined successfully!", {
-            position: "top-right",
-            autoClose: 3000, 
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
         });
         setFriendRequests(page.props.initialFriendRequests);
       },
@@ -60,7 +60,7 @@ const FriendsPage = ({initialFriends, initialFriendRequests}) => {
   };
 
   return (
-    <div className="col-span-9 min-h-screen  mt-4">
+    <div className="col-span-9 min-h-screen">
       <div className="max-w-4xl mx-auto space-y-8">
         {error && (
           <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-xl shadow-md flex items-center transform hover:scale-102 transition-all duration-300" role="alert">
@@ -80,7 +80,7 @@ const FriendsPage = ({initialFriends, initialFriendRequests}) => {
                 className="flex items-center justify-between p-5 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md"
               >
                 <div className="flex items-center">
-                  <UserAvatar user={request.sender}/>
+                  <UserAvatar user={request.sender} />
                   <span className="ml-4 font-semibold text-gray-700 text-lg">{request.sender.first_name} {request.sender.sur_name}</span>
                 </div>
                 <div className="flex space-x-3">
@@ -128,7 +128,7 @@ const FriendsPage = ({initialFriends, initialFriendRequests}) => {
                 key={friend.id}
                 className="flex items-center p-5 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all duration-300 transform hover:-translate-y-1 hover:shadow-md cursor-pointer"
               >
-               <UserAvatar user={friend} />
+                <UserAvatar user={friend} />
                 <span className="ml-4 font-semibold text-gray-700 text-lg">{friend.first_name} {friend.sur_name}</span>
               </div>
             ))}
@@ -143,7 +143,7 @@ const FriendsPage = ({initialFriends, initialFriendRequests}) => {
 };
 
 FriendsPage.layout = (page) => (
-    <Layout showRightBar={false} showLeftBar={true}>{page}</Layout>
-  );
+  <Layout showRightBar={false} showLeftBar={true}>{page}</Layout>
+);
 
 export default FriendsPage;
