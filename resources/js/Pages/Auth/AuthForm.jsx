@@ -18,7 +18,7 @@ const AuthForm = () => {
         <div className="w-full max-w-6xl bg-white rounded-2xl shadow-2xl overflow-hidden relative">
           <div className="flex flex-col md:flex-row h-full transition-all duration-1000 ease-in-out relative">
             {/* Form Section */}
-            <PersonalInfoForm {...{ data, errors, handleSubmit, avatar, handleDateChange, handleAvatarChange, toggleForm, handleChange, loading, isLogin, toggleForm }} />
+            <PersonalInfoForm {...{ data, errors, handleSubmit, avatar, handleDateChange, handleAvatarChange, handleChange, loading, isLogin, toggleForm }} />
 
             {/* Overlay Section */}
             <OverlaySection {...{ isLogin, toggleForm }} />

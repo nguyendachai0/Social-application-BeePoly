@@ -34,6 +34,7 @@ class Conversation extends Model
         $users = User::getUserExceptUser($user);
         $groups = Group::getGroupsForUser($user);
         $friendsWithoutConversation = User::getFriendsWithoutConversation($user);
+        Log::info(['friendswithoutConversation' => $friendsWithoutConversation]);
         return $users->map(function (User $user) {
             return $user->toConversationArray();
         })->concat($groups->map(function (Group $group) {

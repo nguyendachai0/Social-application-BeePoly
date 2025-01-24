@@ -61,11 +61,7 @@ const Navbar = () => {
       case "friend": return <FaUser className="text-green-500" />;
       default: return <FaBell className="text-yellow-500" />;
     }
-  };
-  const unreadNotifications = notifications.filter(notif => !notif.read).length;
-  const [showNotifications, setShowNotifications] = useState(false);
-
-
+  }
 
   const { emit, on } = useEventBus();
 
@@ -161,6 +157,7 @@ const Navbar = () => {
 
   useEffect(() => {
     setLocalConversations(conversations);
+    console.log(conversations);
   }, [conversations]);
 
   useEffect(() => {
@@ -376,7 +373,7 @@ const Navbar = () => {
                   onClick={() => setShowProfileMenu(!showProfileMenu)}
                   className="flex items-center space-x-2 text-white hover:bg-white/20 px-4 py-2 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105"
                 >
-                  <UserAvatar user={user} size="small" />
+                  <UserAvatar user={user} size="small" useLink={false} />
                   <FaChevronDown className="text-sm" />
                 </button>
                 {showProfileMenu && (
@@ -387,7 +384,7 @@ const Navbar = () => {
                         href={`${user.email}`}
                         className="flex items-center space-x-3 no-underline"
                       >
-                        <UserAvatar user={user} size="small" />
+                        <UserAvatar user={user} size="small" useLink={false} />
                         <div>
                           <h3 className="font-semibold text-gray-800">{user.first_name} {user.sur_name}</h3>
                         </div>

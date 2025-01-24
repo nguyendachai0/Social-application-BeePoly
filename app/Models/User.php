@@ -162,6 +162,7 @@ class User extends Authenticatable
             'last_name' => $this->last_name,
             'sur_name' => $this->sur_name,
             'name' => $this->fullName,
+            'avatar' => $this->avatar,
             'is_group' => false,
             'is_user' => true,
             'is_admin' =>  (bool) $this->is_admin,
@@ -221,24 +222,30 @@ class User extends Authenticatable
 
         return User::select('users.*')
             ->join('friend_requests', function ($join) use ($userId) {
-                $join->on('friend_requests.sender_id', '=', 'users.id')
-                    ->orWhere('friend_requests.receiver_id', '=', 'users.id');
+                $join->on(function ($joinCondition) {
+                    $joinCondition->on('friend_requests.sender_id', '=', 'users.id')
+                    ->orOn('friend_requests.receiver_id', '=', 'users.id');
+                });
             })
             ->where(function ($query) use ($userId) {
-                $query->where('friend_requests.receiver_id', '=', $userId)
-                    ->orWhere('friend_requests.sender_id', '=', $userId);
+                $query->where('friend_requests.sender_id', '=', $userId)
+                    ->orWhere('friend_requests.receiver_id', '=', $userId);
             })
             ->where('users.id', '!=', $userId)
             ->whereNotExists(function ($query) use ($userId) {
                 $query->select(DB::raw(1))
                     ->from('conversations')
                     ->where(function ($subquery) use ($userId) {
-                        $subquery->whereColumn('conversations.user_id1', '=', 'users.id')
-                            ->where('conversations.user_id2', '=', $userId)
-                            ->orWhere(function ($subsubquery) use ($userId) {
-                                $subsubquery->whereColumn('conversations.user_id2', '=', 'users.id')
-                                    ->where('conversations.user_id1', '=', $userId);
-                            });
+                        $subquery->where(function ($condition) use ($userId) {
+                            // Case 1: Current user is user_id1 and friend is user_id2
+                            $condition->whereColumn('conversations.user_id1', '=', 'users.id')
+                                      ->where('conversations.user_id2', '=', $userId);
+                        })
+                        ->orWhere(function ($condition) use ($userId) {
+                            // Case 2: Current user is user_id2 and friend is user_id1
+                            $condition->whereColumn('conversations.user_id2', '=', 'users.id')
+                                      ->where('conversations.user_id1', '=', $userId);
+                        });
                     });
             })
             ->orderBy('users.first_name')
